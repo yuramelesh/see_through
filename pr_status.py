@@ -54,25 +54,26 @@ def build_pr_status_message(github_token, repo_config):
     pull_requests_json = get_all_pull_requests(github_token, repo_config)
 
     for pr in pull_requests_json:
-        if pr['user']['login'] in repo_config['profiles_to_track']:
-            pull_request_json = get_pull_request(github_token, repo_config, pr['number'])
+        for profile in repo_config['profiles']:
+            if pr['user']['login'] in profile['user']:
+                pull_request_json = get_pull_request(github_token, repo_config, pr['number'])
 
-            # logger.debug(json.dumps(pull_request_json, indent=4, sort_keys=True))  # pretty print
+                logger.debug(json.dumps(pull_request_json, indent=4, sort_keys=True))  # pretty print
 
-            status.append("<h3>%s</h3>" % pull_request_json['title'])
-            status.append("User: %s<br/>" % pull_request_json['user']['login'])
-            status.append("URL: %s<br/>" % pull_request_json['html_url'])
+                status.append("<h3>%s</h3>" % pull_request_json['title'])
+                status.append("User: %s<br/>" % pull_request_json['user']['login'])
+                status.append("URL: %s<br/>" % pull_request_json['html_url'])
 
-            if pull_request_json['mergeable']:
-                color = 'green'
-                has_conflicts = 'No'
-            else:
-                color = 'red'
-                has_conflicts = 'Yes'
+                if pull_request_json['mergeable']:
+                    color = 'green'
+                    has_conflicts = 'No'
+                else:
+                    color = 'red'
+                    has_conflicts = 'Yes'
 
-            status.append('Has conflicts: <div style="color: %s; display: inline; font-weight: bold;">%s</div><br/>' % (
-                color, has_conflicts))
-            status.append("<br/><br/>")
+                status.append('Has conflicts: <div style="color: %s; display: inline; font-weight: bold;">%s</div><br/>' % (
+                    color, has_conflicts))
+                status.append("<br/><br/>")
 
     return "\n".join(status)
 
@@ -89,11 +90,12 @@ def main():
     config = read_config()
 
     for repo_config in config['github']:
-        status_message = build_pr_status_message(github_token, repo_config)
+        for notify_config in repo_config['profiles']:
+            status_message = build_pr_status_message(github_token, repo_config)
+    #       print status_message
+            logger.debug(status_message)
 
-        logger.debug(status_message)
-
-        gmail.send_message(repo_config['notification_recepients'], 'PR status: %s' % repo_config['repo'],
+            gmail.send_message(notify_config['notify'], 'PR status: %s' % repo_config['repo'],
                            status_message)
 
     sys.exit(0)
