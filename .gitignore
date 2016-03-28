@@ -62,3 +62,7 @@ target/
 .ipynb_checkpoints
 .idea
 config.yml
+Config.rb
+Gemfile.rb
+data.db
+database.log
