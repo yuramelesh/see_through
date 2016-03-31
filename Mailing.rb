@@ -16,57 +16,59 @@ def mail_send
     start_time = pull_request.added_to_database
     Time.parse(start_time)
     end_time = Time.now
-    conflict_time = TimeDifference.between(start_time, end_time).in_minutes.to_i
+    conflict_time = TimeDifference.between(start_time, end_time).in_hours.to_i
+    conflict = "#{conflict_time} hours"
 
-    conflict = ""
-    merg_status = ' '
+
     mergeable = pull_request.mergeable
     if mergeable
-      merg_status = "<span style='color:green;'><b>YES</b></span>"
+      merg_status = "<span style='color:green;'><b>No</b></span>"
     else
-      merg_status = "<span style='color:red;'><b>NO</b></span>"
-      conflict = "<p>Time in conflict: #{conflict_time} minutes</p>"
+      merg_status = "<span style='color:red;'><b>Yes</b></span> <b>#{conflict}</b>"
     end
 
-
     merg_state = ''
+    importantly_index = 3
     case pull_request.mergeable_state
       when 'clean'
-        merg_state = "<span style='color:green;'><b>build stable</b></span>"
+        merg_state = "<span style='color:green;'><b>Stable</b></span>"
       when 'unstable'
-        merg_state = "<span style='color:red;'><b>build unstable</b></span>"
+        importantly_index = 2
+        merg_state = "<span style='color:red;'><b>Unstable</b></span> <b>#{conflict}</b>"
       when 'dirty'
-        merg_state = "<span style='color:red;'><b>build unstable</b></span>"
+        importantly_index = 1
+        merg_state = "<span style='color:red;'><b>Unstable</b></span> <b>#{conflict}</b>"
       else
     end
 
-    message_block.push("
-        <h3>Pull Request -  #{pull_request.title}<a href='https://github.com/#{REPO}/pull/#{pull_request.pr_id}/'>  ##{pull_request.pr_id}</a></h3>
+    message_block.push({ index: importantly_index, text: "
+        <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{REPO}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
         <p>Author: #{pull_request.author}</p>
         <p>Build status: #{merg_state}</p>
-        <p>Can be merged: #{merg_status}</p>
-        #{conflict}
+        <p>Has conflicts: #{merg_status}</p>
         <p>Committers: #{pull_request.committer}</p>
         <br /><br />
-    ")
+    "})
 
   end
 
+  message_block = message_block.sort_by { |block| block[:index] }
+
   message = <<EOF
 From: #{REPO} <FROM@gmail.com>
-To:
+To: WorkGroup
 Subject: Status Report - #{REPO}
 Mime-Version: 1.0
 Content-Type: text/html
 EOF
 
   message_block.each do |i|
-    message.concat(i.to_s)
+    message << i[:text].to_s
   end
 
-  # smtp = Net::SMTP.new('smtp.gmail.com', 587)
-  # smtp.enable_starttls
-  # smtp.start('gmail.com', STATIC_USER_EMAIL, STATIC_USER_PASSWORD, :login) do |smtp|
-  #   smtp.send_message message, STATIC_USER_EMAIL, USER_MAILS
-  # end
+    smtp = Net::SMTP.new('smtp.gmail.com', 587)
+    smtp.enable_starttls
+    smtp.start('SeeThrough', STATIC_USER_EMAIL, STATIC_USER_PASSWORD, :login) do |smtp|
+      smtp.send_message message, STATIC_USER_EMAIL, 'yuramelesh@gmail.com'#USER_MAILS
+    end
 end
