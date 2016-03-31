@@ -3,7 +3,6 @@ require 'pp'
 require 'active_record'
 require 'time'
 require 'time_difference'
-require_relative 'Config'
 
 def mail_send
 
@@ -42,7 +41,7 @@ def mail_send
     end
 
     message_block.push({ index: importantly_index, text: "
-        <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{REPO}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
+        <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{@config['repo']}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
         <p>Author: #{pull_request.author}</p>
         <p>Build status: #{merg_state}</p>
         <p>Has conflicts: #{merg_status}</p>
@@ -55,9 +54,9 @@ def mail_send
   message_block = message_block.sort_by { |block| block[:index] }
 
   message = <<EOF
-From: #{REPO} <FROM@gmail.com>
+From: #{@config['repo']} <FROM@gmail.com>
 To: WorkGroup
-Subject: Status Report - #{REPO}
+Subject: Status Report - #{@config['repo']}
 Mime-Version: 1.0
 Content-Type: text/html
 EOF
@@ -68,7 +67,7 @@ EOF
 
     smtp = Net::SMTP.new('smtp.gmail.com', 587)
     smtp.enable_starttls
-    smtp.start('SeeThrough', STATIC_USER_EMAIL, STATIC_USER_PASSWORD, :login) do |smtp|
-      smtp.send_message message, STATIC_USER_EMAIL, 'yuramelesh@gmail.com'#USER_MAILS
+    smtp.start('SeeThrough', @config['mailer'], @config['mailer_pass'], :login) do |smtp|
+      smtp.send_message message, @config['mailer'], 'yuramelwsh@gmail.com' #@config['recepients']
     end
 end
