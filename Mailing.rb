@@ -3,8 +3,10 @@ require 'pp'
 require 'active_record'
 require 'time'
 require 'time_difference'
+@config = YAML.load_file('config.yml')
 
 def mail_send
+  repo = @config['repositories'][0]['name']
 
   pull_requests = PullRequest.all
 
@@ -17,7 +19,6 @@ def mail_send
     end_time = Time.now
     conflict_time = TimeDifference.between(start_time, end_time).in_hours.to_i
     conflict = "#{conflict_time} hours"
-
 
     mergeable = pull_request.mergeable
     if mergeable
@@ -41,7 +42,7 @@ def mail_send
     end
 
     message_block.push({ index: importantly_index, text: "
-        <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{@config['repo']}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
+        <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
         <p>Author: #{pull_request.author}</p>
         <p>Build status: #{merg_state}</p>
         <p>Has conflicts: #{merg_status}</p>
@@ -54,9 +55,9 @@ def mail_send
   message_block = message_block.sort_by { |block| block[:index] }
 
   message = <<EOF
-From: #{@config['repo']} <FROM@gmail.com>
+From: #{repo} <FROM@gmail.com>
 To: WorkGroup
-Subject: Status Report - #{@config['repo']}
+Subject: Status Report - #{repo}
 Mime-Version: 1.0
 Content-Type: text/html
 EOF
@@ -67,7 +68,7 @@ EOF
 
     smtp = Net::SMTP.new('smtp.gmail.com', 587)
     smtp.enable_starttls
-    smtp.start('SeeThrough', @config['mailer'], @config['mailer_pass'], :login) do |smtp|
-      smtp.send_message message, @config['mailer'], 'yuramelwsh@gmail.com' #@config['recepients']
+    smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
+      smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], 'yuramelesh@gmail.com' #@config['recepients'] oleh.sklyarenko@gmail.com
     end
 end

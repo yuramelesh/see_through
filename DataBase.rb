@@ -36,6 +36,8 @@ def db_init
         table.column :user_email, :string
         table.column :git_email, :string
         table.column :git_hub_id, :integer
+        table.column :notify_at, :string
+        table.column :daily_status, :boolean
       end
     end
 
@@ -43,13 +45,6 @@ def db_init
       create_table :commentors do |table|
         table.column :pull_request_id, :integer #foreign key
         table.column :user_id, :string
-      end
-    end
-
-    unless ActiveRecord::Base.connection.tables.include? 'pull_request_updates'
-      create_table :pull_request_updates do |table|
-        table.column :pull_request_id, :integer
-        table.column :changed_field, :string
       end
     end
 
@@ -67,9 +62,6 @@ end
 class Commentor < ActiveRecord::Base
   belongs_to :pull_request
   has_one :users
-end
-
-class PullRequestUpdate
 end
 
 def add_new_pull_request i, pr_data
@@ -105,39 +97,18 @@ def check i, pr_data
     if i.number == pull_request.pr_id
       if pull_request.merged != pr_data[:merged]
         pull_request.update(merged: pr_data[:merged])
-        PullRequestUpdate.create(
-            :pull_request_id => i.number,
-            :changed_field => 'merged'
-        )
       end
       if pull_request.mergeable != pr_data[:mergeable]
         pull_request.update(mergeable: pr_data[:mergeable])
-        PullRequestUpdate.create(
-            :pull_request_id => i.number,
-            :changed_field => 'mergeable'
-        )
       end
       if pull_request.mergeable_state != pr_data[:mergeable_state]
         pull_request.update(mergeable_state: pr_data[:mergeable_state])
-        PullRequestUpdate.create(
-            :pull_request_id => i.number,
-            :changed_field => 'mergeable_state'
-        )
       end
       if pull_request.committer != pr_data[:committer]
         pull_request.update(committer: pr_data[:committer])
-        PullRequestUpdate.create(
-            :pull_request_id => i.number,
-            :changed_field => 'committer'
-        )
-
       end
       if pull_request.labes != pr_data[:label]
         pull_request.update(labels: pr_data[:label])
-        PullRequestUpdate.create(
-            :pull_request_id => i.number,
-            :changed_field => 'labes'
-        )
       end
     end
   end
@@ -161,6 +132,7 @@ def add_users_to_base user_list
         :user_login => user.login,
         :user_email => user.email,
         :git_hub_id => user.id,
+        :daily_status => true,
     )
   end
 
@@ -182,4 +154,15 @@ def add_users_to_base user_list
     end
   end
 
+end
+
+def updating_user user
+  if user['daily_status_report'] == 'true'
+    daily_report = true
+  else
+    daily_report = false
+  end
+  user_to_update = User.where(user_login: user['login']).take
+  user_to_update.update(daily_status: daily_report)
+  user_to_update.update(notify_at: user['tz_shift'])
 end
