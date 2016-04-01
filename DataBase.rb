@@ -20,6 +20,7 @@ def db_init
         t.column :merged, :boolean, :null => false
         t.column :mergeable, :boolean, :null => true
         t.column :mergeable_state, :string, :null => true
+        t.column :state, :string, :null => true
         t.column :pr_commentors, :string, :null => true
         t.column :committer, :string, :null => true
         t.column :labels, :string, :null => true
@@ -72,6 +73,7 @@ def add_new_pull_request i, pr_data
       :merged => pr_data[:merged],
       :mergeable => pr_data[:mergeable],
       :mergeable_state => pr_data[:mergeable_state],
+      :state => pr_data[:state],
       :pr_commentors => pr_data[:commentors].to_a.join(", "),
       :committer => pr_data[:committer].to_a.join(", "),
       :labels => pr_data[:label].to_a.join(", "),
@@ -97,6 +99,9 @@ def check i, pr_data
     if i.number == pull_request.pr_id
       if pull_request.merged != pr_data[:merged]
         pull_request.update(merged: pr_data[:merged])
+      end
+      if pull_request.state != pr_data[:state]
+        pull_request.update(state: pr_data[:state])
       end
       if pull_request.mergeable != pr_data[:mergeable]
         pull_request.update(mergeable: pr_data[:mergeable])

@@ -19,8 +19,6 @@ db_init
   updating_user user
 end
 
-mail_send
-
 CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 
 repo_users_list = CLIENT.organization_members(organization)
@@ -31,12 +29,10 @@ end
 
 add_users_to_base user_list
 
-
 # Getting pull requests information
 pull_requests_list = CLIENT.pull_requests(repo)
 
 pull_requests_list.each do |pr|
-# CLIENT.statuses(@config['repo'], pr.merge_commit_sha).to_json
   pr_data = {}
   comments = [].to_set
   pr_label = [].to_set
@@ -74,7 +70,18 @@ pull_requests_list.each do |pr|
   pr_data[:label] = pr_label
   pr_data[:created_at] = request_status.created_at
   pr_data[:updated_at] = request_status.updated_at
+  pr_data[:state] = request_status.state
 
   check_pull_request pr, pr_data
 end
 
+def check_pull_status repo
+  PullRequest.all.each do |pull_request|
+    cheking = CLIENT.pull_request(repo, pull_request.pr_id)
+    pull_request.update(state: cheking.state)
+  end
+end
+
+check_pull_status repo
+
+mail_send

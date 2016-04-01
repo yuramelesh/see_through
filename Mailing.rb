@@ -5,6 +5,13 @@ require 'time'
 require 'time_difference'
 @config = YAML.load_file('config.yml')
 
+def send_time_check
+  time = Time.now.getutc
+  puts time
+end
+
+send_time_check
+
 def mail_send
   repo = @config['repositories'][0]['name']
 
