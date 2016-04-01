@@ -61,7 +61,7 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 .idea
+*~
 config.yml
-Config.rb
 data.db
 database.log

@@ -27,7 +27,6 @@ def db_init
         t.column :created_at, :string, :null => true
         t.column :updated_at, :string, :null => true
         t.column :added_to_database, :string #:null => true
-
       end
     end
 
@@ -48,7 +47,6 @@ def db_init
         table.column :user_id, :string
       end
     end
-
   end
 end
 
@@ -80,7 +78,6 @@ def add_new_pull_request i, pr_data
       :created_at => pr_data[:created_at],
       :updated_at => pr_data[:updated_at],
       :added_to_database => Time.new,
-
   )
 
   commentors_list = pr_data[:commentors].to_a
@@ -126,7 +123,6 @@ def check_pull_request i, pr_data
   else
     add_new_pull_request i, pr_data
   end
-
 end
 
 def add_users_to_base user_list
@@ -159,7 +155,6 @@ def add_users_to_base user_list
       end
     end
   end
-
 end
 
 def updating_user user

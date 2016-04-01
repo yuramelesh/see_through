@@ -88,4 +88,7 @@ end
 
 check_pull_status repo
 
-mail_send
+recipients = User.all.where(enable: true)
+recipients.each do |user|
+  mail_send user
+end
