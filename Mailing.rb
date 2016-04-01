@@ -5,17 +5,14 @@ require 'time'
 require 'time_difference'
 @config = YAML.load_file('config.yml')
 
-def send_time_check
-  time = Time.now.getutc
-  puts time
-end
-
-send_time_check
+# def send_time_check user
+#   utc_time = Time.now.getutc
+# end
 
 def mail_send
   repo = @config['repositories'][0]['name']
 
-  pull_requests = PullRequest.all
+  pull_requests = PullRequest.all.where(state: 'open')
 
   message_block = []
 
@@ -73,15 +70,17 @@ EOF
     message << i[:text].to_s
   end
 
-  recipients = User.all.where(daily_status: true)
+  recipients = User.all.where(enable: true)
   mails_list = []
   recipients.each do |user|
-    mails_list.push(user.user_email)
+    if send_time_check(user)
+      mails_list.push(user.user_email)
+    end
   end
 
   smtp = Net::SMTP.new('smtp.gmail.com', 587)
   smtp.enable_starttls
   smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
-    smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], mails_list
+    smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], 'yuramelesh@gmail.com ' #mails_list
   end
 end

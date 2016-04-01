@@ -38,7 +38,7 @@ def db_init
         table.column :git_email, :string
         table.column :git_hub_id, :integer
         table.column :notify_at, :string
-        table.column :daily_status, :boolean
+        table.column :enable, :boolean
       end
     end
 
@@ -137,7 +137,8 @@ def add_users_to_base user_list
         :user_login => user.login,
         :user_email => user.email,
         :git_hub_id => user.id,
-        :daily_status => true,
+        :enable => true,
+
     )
   end
 
@@ -162,13 +163,13 @@ def add_users_to_base user_list
 end
 
 def updating_user user
-  if user['daily_status_report'].to_s == 'true'
+  if user['enable'].to_s == 'true'
     daily_report = true
   else
     daily_report = false
   end
   user_to_update = User.where(user_login: user['login']).take
-  user_to_update.update(daily_status: daily_report)
+  user_to_update.update(enable: daily_report)
   user_to_update.update(notify_at: user['tz_shift'])
   user_to_update.update(user_email: user['email'])
 end

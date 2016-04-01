@@ -78,7 +78,11 @@ end
 def check_pull_status repo
   PullRequest.all.each do |pull_request|
     cheking = CLIENT.pull_request(repo, pull_request.pr_id)
-    pull_request.update(state: cheking.state)
+    if cheking.merged.to_s == 'true'
+      pull_request.update(state: 'merged')
+    else
+      pull_request.update(state: cheking.state)
+    end
   end
 end
 
