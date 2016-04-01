@@ -19,6 +19,7 @@ db_init
   updating_user user
 end
 
+mail_send
 
 CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 
@@ -77,4 +78,3 @@ pull_requests_list.each do |pr|
   check_pull_request pr, pr_data
 end
 
-mail_send

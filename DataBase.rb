@@ -157,7 +157,7 @@ def add_users_to_base user_list
 end
 
 def updating_user user
-  if user['daily_status_report'] == 'true'
+  if user['daily_status_report'].to_s == 'true'
     daily_report = true
   else
     daily_report = false
@@ -165,4 +165,5 @@ def updating_user user
   user_to_update = User.where(user_login: user['login']).take
   user_to_update.update(daily_status: daily_report)
   user_to_update.update(notify_at: user['tz_shift'])
+  user_to_update.update(user_email: user['email'])
 end

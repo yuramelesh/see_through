@@ -28,20 +28,20 @@ def mail_send
     end
 
     merg_state = ''
-    importantly_index = 3
+    importance = 3
     case pull_request.mergeable_state
       when 'clean'
         merg_state = "<span style='color:green;'><b>Stable</b></span>"
       when 'unstable'
-        importantly_index = 2
+        importance = 2
         merg_state = "<span style='color:red;'><b>Unstable</b></span> <b>#{conflict}</b>"
       when 'dirty'
-        importantly_index = 1
+        importance = 1
         merg_state = "<span style='color:red;'><b>Unstable</b></span> <b>#{conflict}</b>"
       else
     end
 
-    message_block.push({ index: importantly_index, text: "
+    message_block.push({index: importance, text: "
         <h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
         <p>Author: #{pull_request.author}</p>
         <p>Build status: #{merg_state}</p>
@@ -66,9 +66,15 @@ EOF
     message << i[:text].to_s
   end
 
-    smtp = Net::SMTP.new('smtp.gmail.com', 587)
-    smtp.enable_starttls
-    smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
-      smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], 'yuramelesh@gmail.com' #@config['recepients'] oleh.sklyarenko@gmail.com
-    end
+  recipients = User.all.where(daily_status: true)
+  mails_list = []
+  recipients.each do |user|
+    mails_list.push(user.user_email)
+  end
+
+  smtp = Net::SMTP.new('smtp.gmail.com', 587)
+  smtp.enable_starttls
+  smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
+    smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], mails_list
+  end
 end
