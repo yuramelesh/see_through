@@ -74,7 +74,9 @@ def mail_send user_to
   other_block = other_block.sort_by { |block| block[:index] }
 
   your_problem_pr = ''
+  first_hr = ''
   if your_block.length > 0
+    first_hr = '<hr>'
     your_problem_pr << "<h2>My pull requests with issues</h2>"
     your_block.each do |i|
       your_problem_pr << i[:text].to_s
@@ -94,7 +96,7 @@ def mail_send user_to
   end
 
   recently_merged = ''
-  recently_merged << "<hr><h2>Recently merged pull requests</h2>"
+  recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
   PullRequest.all.where(state: 'merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"

@@ -21,6 +21,11 @@ end
 
 CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 
+recipients = User.all.where(enable: true)
+recipients.each do |user|
+  mail_send user
+end
+
 repo_users_list = CLIENT.organization_members(organization)
 user_list = [].to_set
 repo_users_list.each do |user|
@@ -88,7 +93,3 @@ end
 
 check_pull_status repo
 
-recipients = User.all.where(enable: true)
-recipients.each do |user|
-  mail_send user
-end

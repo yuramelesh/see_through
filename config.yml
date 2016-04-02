@@ -1,0 +1,21 @@
+repositories:
+  - name: google/guava
+    organization: google
+    recepients:
+      - userLogin
+      - userLogin1
+  - name: google/android
+    organization: google
+    recepients:
+      - userLogin2
+      - userLogin3
+
+profiles:
+    - login: userLogin
+      email: userLogin@gmail.com
+      tz_shift: 3
+      enable: true
+    - login: userLogin2
+      email: userLogin2@gmail.com
+      tz_shift: 3
+      enable: true
