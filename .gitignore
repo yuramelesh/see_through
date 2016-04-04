@@ -62,6 +62,6 @@ target/
 .ipynb_checkpoints
 .idea
 *~
-config.yml
+*.yml
 data.db
 database.log

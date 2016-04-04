@@ -123,12 +123,11 @@ Content-Type: text/html
 
 #{your_problem_pr}
 
-#{recently_merged}
+  #{recently_merged}
 
-#{new_pr}
+  #{new_pr}
 
-#{other_problem_pr}
-
+  #{other_problem_pr}
 
 EOF
 

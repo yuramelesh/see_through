@@ -16,15 +16,10 @@ organization = @config['repositories'][0]['organization']
 db_init
 
 @config['profiles'].each do |user|
-  updating_user user
+  sync_user_with_config user
 end
 
 CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
-
-recipients = User.all.where(enable: true)
-recipients.each do |user|
-  mail_send user
-end
 
 repo_users_list = CLIENT.organization_members(organization)
 user_list = [].to_set
@@ -38,7 +33,7 @@ add_users_to_base user_list
 pull_requests_list = CLIENT.pull_requests(repo)
 
 pull_requests_list.each do |pr|
-  pr_data = {}
+  pr_additional_data = {}
   comments = [].to_set
   pr_label = [].to_set
   request_status = CLIENT.pull_request(repo, pr.number)
@@ -67,17 +62,17 @@ pull_requests_list.each do |pr|
     end
   end
 
-  pr_data[:merged] = request_status.merged
-  pr_data[:mergeable] = request_status.mergeable
-  pr_data[:mergeable_state] = request_status.mergeable_state
-  pr_data[:commentors] = comments
-  pr_data[:committer] = committers
-  pr_data[:label] = pr_label
-  pr_data[:created_at] = request_status.created_at
-  pr_data[:updated_at] = request_status.updated_at
-  pr_data[:state] = request_status.state
+  pr_additional_data[:merged] = request_status.merged
+  pr_additional_data[:mergeable] = request_status.mergeable
+  pr_additional_data[:mergeable_state] = request_status.mergeable_state
+  pr_additional_data[:commentors] = comments
+  pr_additional_data[:committer] = committers
+  pr_additional_data[:label] = pr_label
+  pr_additional_data[:created_at] = request_status.created_at
+  pr_additional_data[:updated_at] = request_status.updated_at
+  pr_additional_data[:state] = request_status.state
 
-  check_pull_request pr, pr_data
+  check_pr_for_existing pr, pr_additional_data
 end
 
 def check_pull_status repo
@@ -93,3 +88,7 @@ end
 
 check_pull_status repo
 
+recipients = User.all.where(enable: true)
+recipients.each do |user|
+  mail_send user
+end
