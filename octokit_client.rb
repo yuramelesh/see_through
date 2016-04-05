@@ -79,8 +79,24 @@ class OctokitClient
     end
   end
 
+  def get_all_github_pr repo
+    begin
+      pulls = CLIENT.pull_requests repo
+      if pulls != nil
+        return pulls
+      end
+    rescue
+      puts "No pull requests in #{repo}"
+    end
+
+  end
+
   def get_github_user_by_login login
     CLIENT.user(login)
+  end
+
+  def get_github_pr_by_number repo, number
+    CLIENT.pull_request(repo, number)
   end
 
   def check_pr_for_existing pr_data

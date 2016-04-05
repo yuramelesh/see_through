@@ -64,6 +64,10 @@ class MainController
     @db.get_all_pull_requests
   end
 
+  def get_pr_by_id id
+    @db.get_pull_requests_by_id id
+  end
+
   def get_pr_by_state state
     @db.get_pull_requests_by_state state
   end

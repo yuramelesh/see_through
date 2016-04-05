@@ -109,7 +109,6 @@ def get_new_pr other_block
     end
     new_pr << '</div>'
   end
-
   new_pr
 end
 
@@ -120,13 +119,9 @@ def create_mail_message user_to, repo
   your_block = []
 
   pull_requests.each do |pull_request|
-
     conflict = get_time_in_conflict pull_request
-
     merge_status = get_mergeable_field pull_request, conflict
-
     importance = get_importance pull_request
-
     merge_state = get_mergeable_state importance, conflict
 
     block = ({index: importance, text: "
@@ -153,9 +148,7 @@ def create_mail_message user_to, repo
 
   your_block = your_block.sort_by { |block| block[:index] }
   other_block = other_block.sort_by { |block| block[:index] }
-
   your_problem_pr = get_your_problem_pr your_block
-
   first_hr = ''
   if your_block.length > 0
     first_hr = '<hr>'
@@ -178,14 +171,11 @@ Content-Type: text/html
   #{other_problem_pr}
 
 EOF
-
   message
 end
 
 def send_mail user_to, repo
-
   message = create_mail_message user_to, repo
-
   smtp = Net::SMTP.new('smtp.mandrillapp.com', 587)
   smtp.enable_starttls
   smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|

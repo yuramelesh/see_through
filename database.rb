@@ -55,6 +55,10 @@ class Database
 
 # Getters
 
+  def get_pull_requests_by_id id
+    PullRequest.where(pr_id: id)
+  end
+
   def get_all_pull_requests
     PullRequest.all
   end
