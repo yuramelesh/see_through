@@ -1,6 +1,6 @@
 require 'active_record'
 
-def db_init
+def init_database
 
   ActiveRecord::Base.logger = Logger.new(File.open('database.log', 'w'))
 
@@ -69,3 +69,60 @@ class Commentor < ActiveRecord::Base
   belongs_to :pull_request
   has_one :users
 end
+
+def create_pull_request_in_db pull_request_data
+  PullRequest.create(
+      :title => pull_request_data[:title],
+      :pr_id => pull_request_data[:number],
+      :author => pull_request_data[:user_login],
+      :merged => pull_request_data[:merged],
+      :mergeable => pull_request_data[:mergeable],
+      :mergeable_state => pull_request_data[:mergeable_state],
+      :state => pull_request_data[:state],
+      :pr_commentors => pull_request_data[:commentors].to_a.join(", "),
+      :committer => pull_request_data[:committer].to_a.join(", "),
+      :labels => pull_request_data[:label].to_a.join(", "),
+      :created_at => pull_request_data[:created_at],
+      :updated_at => pull_request_data[:updated_at],
+      :added_to_database => Time.new,
+  )
+
+  commentors = pull_request_data[:commentors].to_a
+  build_list_of_commentors commentors
+end
+
+def create_new_user_in_db user
+  User.create(
+      :user_login => user.login,
+      :user_email => user.email,
+      :git_hub_id => user.id,
+      :enable => false,
+  )
+end
+
+def update_pull_request_state pull_request, state
+  pull_request.update(state: state)
+end
+
+# Getters
+
+def get_all_pull_requests_from_db
+  PullRequest.all
+end
+
+def get_pull_requests_by_state state
+  PullRequest.all.where(state: state)
+end
+
+def get_pull_request_by_id pull_request_id
+  PullRequest.find_by(pr_id: pull_request_id)
+end
+
+def get_recipients
+  User.all.where(enable: true)
+end
+
+def get_user_by_login login
+  User.where(user_login: login).take
+end
+

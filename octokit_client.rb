@@ -56,28 +56,26 @@ def get_github_pr repo
       pr_data[:committers] = committers
     end
   rescue
+    puts "No pull requests in #{repo}"
   end
-  return pr_data
+  pr_data
 end
 
 def check_pr_status repo
   begin
-    PullRequest.all.each do |pull_request|
+    get_all_pr.each do |pull_request|
       cheking = CLIENT.pull_request(repo, pull_request.pr_id)
       if cheking.merged.to_s == 'true'
-        pull_request.update(state: 'merged')
+        update_pr_state pull_request, 'merged'
       else
-        pull_request.update(state: cheking.state)
+        update_pr_state pull_request, cheking.state
       end
     end
-  rescue
   end
 end
 
-def get_user_by_login login
+def get_github_user_by_login login
   CLIENT.user(login)
 end
 
-def get_recipients
-  User.all.where(enable: true)
-end
+

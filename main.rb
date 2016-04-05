@@ -8,7 +8,7 @@ require_relative 'octokit_client'
 repositories = Config_reader.new.get_repos
 users_from_yml = Config_reader.new.get_users_from_config_yml
 
-db_init
+init_database
 
 users_from_yml.each do |user|
   sync_user_with_config user
@@ -27,8 +27,6 @@ repositories.each do |repo|
 
   pr_data = get_github_pr repo
 
-  puts pr_data.length
-
   if pr_data.length != 0
 
     check_pr_for_existing pr_data
@@ -38,4 +36,3 @@ repositories.each do |repo|
     mail_sending repo
   end
 end
-

@@ -19,7 +19,7 @@ def get_time_in_conflict pull_request
   conflict_time = TimeDifference.between(start_time, end_time).in_hours.to_i
   conflict = "#{conflict_time} hours"
 
-  return conflict
+  conflict
 end
 
 def get_mergeable_field pull_request, conflict
@@ -30,7 +30,7 @@ def get_mergeable_field pull_request, conflict
     merge_status = "<span style='color:red;'><b>Yes</b></span> <b>#{conflict}</b>"
   end
 
-  return merge_status
+  merge_status
 end
 
 def get_importance pull_request
@@ -45,7 +45,7 @@ def get_importance pull_request
       importance = 3
   end
 
-  return importance
+  importance
 end
 
 def get_mergeable_state importance, conflict
@@ -60,7 +60,7 @@ def get_mergeable_state importance, conflict
       merge_state = ''
   end
 
-  return merge_state
+  merge_state
 end
 
 def get_your_problem_pr your_block
@@ -73,7 +73,7 @@ def get_your_problem_pr your_block
     your_problem_pr << "</div>"
   end
 
-  return your_problem_pr
+  your_problem_pr
 end
 
 def get_other_problem_pr other_block
@@ -88,19 +88,19 @@ def get_other_problem_pr other_block
     other_problem_pr << "</div>"
   end
 
-  return other_problem_pr
+  other_problem_pr
 end
 
 def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
-  PullRequest.all.where(state: 'merged').each do |pull_request|
+  get_pr_by_state('merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"
   end
   recently_merged << "</div>"
 
-  return recently_merged
+  recently_merged
 end
 
 def get_new_pr other_block
@@ -115,12 +115,12 @@ def get_new_pr other_block
     new_pr << '</div>'
   end
 
-  return new_pr
+  new_pr
 end
 
 def create_mail_message user_to, repo
 
-  pull_requests = get_open_pull_requests
+  pull_requests = get_pr_by_state 'open'
   other_block = []
   your_block = []
 
@@ -184,7 +184,7 @@ Content-Type: text/html
 
 EOF
 
-  return message
+  message
 end
 
 def send_mail user_to, repo
