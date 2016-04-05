@@ -1,10 +1,14 @@
 require_relative 'database'
 require_relative 'octokit_client'
 
-class Database_controller
+class MainController
+
+  def initialize
+    @db = Database.new
+  end
 
   def add_new_pr pr_data
-    create_pull_request_in_db pr_data
+    @db.create_pull_request pr_data
   end
 
   def checking_pr_for_changes pr_data
@@ -37,7 +41,7 @@ class Database_controller
 
   def create_or_update_pr pr_data
     if pr_data.length != 0
-      if get_pull_request_by_id pr_data[:number]
+      if @db.get_pull_request_by_id pr_data[:number]
         checking_pr_for_changes pr_data
       else
         add_new_pr pr_data
@@ -47,29 +51,28 @@ class Database_controller
 
   def add_new_user login
     user = get_github_user_by_login login
-    create_new_user_in_db user
+    create_new_user user
   end
 
   def sync_user_with_config user
     daily_report = user.enable
-    user_to_update = get_user_by_login user.login
+    user_to_update = @db.get_user_by_login user.login
     user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
   end
 
   def get_all_pr
-    get_all_pull_requests_from_db
+    @db.get_all_pull_requests
   end
 
   def get_pr_by_state state
-    get_pull_requests_by_state state
+    @db.get_pull_requests_by_state state
   end
 
   def update_pr_state pr, state
-    update_pull_request_state pr, state
+    @db.update_pull_request_state pr, state
   end
 
   def get_recipients_list
-    get_recipients
+    @db.get_recipients
   end
-
 end

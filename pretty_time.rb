@@ -5,8 +5,12 @@ class PrettyTime
     hours = mins / 60
     days  = hours / 24
 
-    if days > 0
+    if days == 1
+      "#{days} day"
+    elsif days > 0
       "#{days} days"
+    elsif hours == 1
+      "#{hours} hour"
     elsif hours > 0
       "#{hours} hours"
     elsif mins > 0

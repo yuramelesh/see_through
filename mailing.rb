@@ -1,23 +1,19 @@
 require 'net/smtp'
 require 'time'
 require 'time_difference'
-require_relative 'config_reader'
-require_relative 'database_controller'
+require_relative 'config/config_reader'
+require_relative 'main_controller'
 require_relative 'pretty_time'
 
 # def send_time_check user
 #   utc_time = Time.now.getutc
-#   puts utc_time
-#   puts utc_time.strftime( "%H" )
-#   user.noti
-#   puts user.to_json
+#   utc_time.strftime( "%H" )
 # end
 
 def get_time_in_conflict pull_request
   start_time = pull_request.added_to_database
   Time.parse(start_time)
-  end_time = Time.now
-  conflict_time = TimeDifference.between(start_time, end_time).in_seconds.to_i
+  conflict_time = TimeDifference.between(start_time, Time.now).in_seconds.to_i
   PrettyTime.new.duration conflict_time
 end
 
@@ -93,7 +89,7 @@ end
 def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
-  Database_controller.new.get_pr_by_state('merged').each do |pull_request|
+  MainController.new.get_pr_by_state('merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"
   end
@@ -119,7 +115,7 @@ end
 
 def create_mail_message user_to, repo
 
-  pull_requests = Database_controller.new.get_pr_by_state 'open'
+  pull_requests = MainController.new.get_pr_by_state 'open'
   other_block = []
   your_block = []
 
@@ -170,7 +166,7 @@ def create_mail_message user_to, repo
   new_pr = get_new_pr other_block
 
   message = <<EOF
-From: #{repo} <FROM@gmail.com>
+From: #{repo} <FROM@vgs.io>
 To: WorkGroup
 Subject: Status Report - #{repo}
 Mime-Version: 1.0
@@ -190,7 +186,7 @@ def send_mail user_to, repo
 
   message = create_mail_message user_to, repo
 
-  smtp = Net::SMTP.new('smtp.gmail.com', 587)
+  smtp = Net::SMTP.new('smtp.mandrillapp.com', 587)
   smtp.enable_starttls
   smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
     smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], user_to.user_email
