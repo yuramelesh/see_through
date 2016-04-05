@@ -23,12 +23,12 @@ class Config_reader
 
   def get_repos
     read_repos
-    return @repositories
+    @repositories
   end
 
   def get_users_from_config_yml
     read_users_from_config_yml
-    return @profiles
+    @profiles
   end
 
   public :get_repos, :get_users_from_config_yml

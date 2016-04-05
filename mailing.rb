@@ -3,6 +3,7 @@ require 'time'
 require 'time_difference'
 require_relative 'config_reader'
 require_relative 'database_controller'
+require_relative 'pretty_time'
 
 # def send_time_check user
 #   utc_time = Time.now.getutc
@@ -16,10 +17,8 @@ def get_time_in_conflict pull_request
   start_time = pull_request.added_to_database
   Time.parse(start_time)
   end_time = Time.now
-  conflict_time = TimeDifference.between(start_time, end_time).in_hours.to_i
-  conflict = "#{conflict_time} hours"
-
-  conflict
+  conflict_time = TimeDifference.between(start_time, end_time).in_seconds.to_i
+  PrettyTime.new.duration conflict_time
 end
 
 def get_mergeable_field pull_request, conflict
@@ -94,7 +93,7 @@ end
 def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
-  get_pr_by_state('merged').each do |pull_request|
+  Database_controller.new.get_pr_by_state('merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"
   end
@@ -120,7 +119,7 @@ end
 
 def create_mail_message user_to, repo
 
-  pull_requests = get_pr_by_state 'open'
+  pull_requests = Database_controller.new.get_pr_by_state 'open'
   other_block = []
   your_block = []
 

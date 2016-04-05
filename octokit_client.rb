@@ -1,11 +1,10 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rsuby
 require 'octokit'
 require_relative 'database_controller'
 
 CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 
 def get_github_pr repo
-
   pr_data = {}
 
   begin
@@ -63,12 +62,12 @@ end
 
 def check_pr_status repo
   begin
-    get_all_pr.each do |pull_request|
+    Database_controller.new.get_all_pr.each do |pull_request|
       cheking = CLIENT.pull_request(repo, pull_request.pr_id)
       if cheking.merged.to_s == 'true'
-        update_pr_state pull_request, 'merged'
+        Database_controller.new.update_pr_state pull_request, 'merged'
       else
-        update_pr_state pull_request, cheking.state
+        Database_controller.new.update_pr_state pull_request, cheking.state
       end
     end
   end
@@ -76,4 +75,8 @@ end
 
 def get_github_user_by_login login
   CLIENT.user(login)
+end
+
+def check_pr_for_existing pr_data
+  Database_controller.new.create_or_update_pr pr_data
 end
