@@ -50,7 +50,7 @@ end
 
 def sync_user_with_config user
   daily_report = user.enable
-  user_to_update = get_github_user_by_login user.login
+  user_to_update = get_user_by_login user.login
   user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
 end
 

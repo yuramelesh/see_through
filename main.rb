@@ -4,6 +4,7 @@ require_relative 'mailing'
 require_relative 'database'
 require_relative 'config_reader'
 require_relative 'octokit_client'
+require_relative 'database_controller'
 
 repositories = Config_reader.new.get_repos
 users_from_yml = Config_reader.new.get_users_from_config_yml

@@ -125,4 +125,3 @@ end
 def get_user_by_login login
   User.where(user_login: login).take
 end
-

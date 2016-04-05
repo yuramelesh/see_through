@@ -77,5 +77,3 @@ end
 def get_github_user_by_login login
   CLIENT.user(login)
 end
-
-
