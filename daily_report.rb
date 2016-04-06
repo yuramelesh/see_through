@@ -5,8 +5,9 @@ require_relative 'config/config_reader'
 require_relative 'octokit_client'
 require_relative 'main_controller'
 
-repositories = Config_reader.new.get_repos
-users_from_yml = Config_reader.new.get_users_from_config_yml
+config = Config_reader.new
+repositories = config.get_repos
+users_from_yml = config.get_users_from_config_yml
 @controller = MainController.new
 @octokit_client = OctokitClient.new
 

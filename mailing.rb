@@ -4,11 +4,14 @@ require 'time_difference'
 require_relative 'config/config_reader'
 require_relative 'main_controller'
 require_relative 'pretty_time'
+require_relative 'mailler'
 
 # def send_time_check user
 #   utc_time = Time.now.getutc
 #   utc_time.strftime( "%H" )
 # end
+
+@email = Email.new
 
 def get_time_in_conflict pull_request
   start_time = pull_request.added_to_database
@@ -176,9 +179,5 @@ end
 
 def send_mail user_to, repo
   message = create_mail_message user_to, repo
-  smtp = Net::SMTP.new('smtp.mandrillapp.com', 587)
-  smtp.enable_starttls
-  smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
-    smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], user_to.user_email
-  end
+  @email.send_mail(message, user_to.user_email)
 end

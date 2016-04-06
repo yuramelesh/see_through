@@ -110,7 +110,7 @@ class Database
     end
   end
 
-  def create_commentors_table
+  def create_commenters_table
     create_table :commentors do |table|
       table.column :pull_request_id, :integer #foreign key
       table.column :user_id, :string
@@ -137,7 +137,7 @@ class Database
       end
 
       unless ActiveRecord::Base.connection.tables.include? 'commentors'
-        create_commentors_table
+        create_commenters_table
       end
     end
   end
