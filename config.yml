@@ -1,7 +1,0 @@
-github:
-  - repo: osklyarenko/see_through
-    profiles_to_track:
-      - zdmytriv
-      - osklyarenko
-    notification_recepients:
-      - zdmytriv@mailinator.com
