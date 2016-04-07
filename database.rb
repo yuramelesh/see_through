@@ -73,6 +73,10 @@ class Database
     Repository.all
   end
 
+  def get_pull_requests_by_mergeable state
+    PullRequest.where(mergeable: state)
+  end
+
   def get_pull_requests_by_id (id)
     PullRequest.where(pr_id: id)
   end

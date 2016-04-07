@@ -1,3 +1,5 @@
+require 'net/smtp'
+
 class Email
 
   def send_mail (message, user_email)
