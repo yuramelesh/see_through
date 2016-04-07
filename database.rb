@@ -6,6 +6,10 @@ class Database
     init_database
   end
 
+  class Repository < ActiveRecord::Base
+
+  end
+
   class User < ActiveRecord::Base
     belongs_to :commentors
   end
@@ -19,8 +23,9 @@ class Database
     has_one :users
   end
 
-  def create_pull_request pull_request_data
+  def create_pull_request (pull_request_data, repo)
     PullRequest.create(
+        :repo => repo,
         :title => pull_request_data[:title],
         :pr_id => pull_request_data[:number],
         :author => pull_request_data[:user_login],
@@ -37,10 +42,10 @@ class Database
     )
 
     commentors = pull_request_data[:commentors].to_a
-    build_list_of_commentors commentors
+    # build_list_of_commentors commentors
   end
 
-  def create_new_user user
+  def create_new_user (user)
     User.create(
         :user_login => user.login,
         :user_email => user.email,
@@ -49,13 +54,26 @@ class Database
     )
   end
 
-  def update_pull_request_state pull_request, state
+  def create_repository (repository)
+    Repository.create(
+        :repo => repository
+    )
+  end
+
+  def update_pull_request_state (pull_request, state)
     pull_request.update(state: state)
   end
 
 # Getters
+  def get_pull_requests_by_repo (repo)
+    PullRequest.where(repo: repo)
+  end
 
-  def get_pull_requests_by_id id
+  def get_all_repositories
+    Repository.all
+  end
+
+  def get_pull_requests_by_id (id)
     PullRequest.where(pr_id: id)
   end
 
@@ -63,11 +81,11 @@ class Database
     PullRequest.all
   end
 
-  def get_pull_requests_by_state state
+  def get_pull_requests_by_state (state)
     PullRequest.all.where(state: state)
   end
 
-  def get_pull_request_by_id pull_request_id
+  def get_pull_request_by_id (pull_request_id)
     PullRequest.find_by(pr_id: pull_request_id)
   end
 
@@ -75,27 +93,34 @@ class Database
     User.all.where(enable: true)
   end
 
-  def get_user_by_login login
+  def get_user_by_login (login)
     User.where(user_login: login).take
   end
 
   private
 
+  def create_repositories_table
+    create_table :repositories do |table|
+      table.column :repo, :string
+    end
+  end
+
   def create_pull_request_table
-    create_table :pull_requests do |t|
-      t.column :title, :string, :null => false
-      t.column :pr_id, :string, :null => false
-      t.column :author, :string, :null => false
-      t.column :merged, :boolean, :null => false
-      t.column :mergeable, :boolean, :null => true
-      t.column :mergeable_state, :string, :null => true
-      t.column :state, :string, :null => true
-      t.column :pr_commentors, :string, :null => true
-      t.column :committer, :string, :null => true
-      t.column :labels, :string, :null => true
-      t.column :created_at, :string, :null => true
-      t.column :updated_at, :string, :null => true
-      t.column :added_to_database, :string #:null => true
+    create_table :pull_requests do |table|
+      table.column :repo, :string, :null => true
+      table.column :title, :string, :null => false
+      table.column :pr_id, :string, :null => false
+      table.column :author, :string, :null => false
+      table.column :merged, :boolean, :null => false
+      table.column :mergeable, :boolean, :null => true
+      table.column :mergeable_state, :string, :null => true
+      table.column :state, :string, :null => true
+      table.column :pr_commentors, :string, :null => true
+      table.column :committer, :string, :null => true
+      table.column :labels, :string, :null => true
+      table.column :created_at, :string, :null => true
+      table.column :updated_at, :string, :null => true
+      table.column :added_to_database, :string #:null => true
     end
   end
 
@@ -139,6 +164,11 @@ class Database
       unless ActiveRecord::Base.connection.tables.include? 'commentors'
         create_commenters_table
       end
+
+      unless ActiveRecord::Base.connection.tables.include? 'repositories'
+        create_repositories_table
+      end
+
     end
   end
 end

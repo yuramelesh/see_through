@@ -66,20 +66,24 @@ class OctokitClient
     pr_data
   end
 
-  def check_pr_status repo
+  def check_pr_status (repo)
     begin
-      @mainController.get_all_pr.each do |pull_request|
-        cheking = CLIENT.pull_request(repo, pull_request.pr_id)
-        if cheking.merged.to_s == 'true'
-          @mainController.update_pr_state pull_request, 'merged'
-        else
-          @mainController.update_pr_state pull_request, cheking.state
+      @mainController.get_pr_by_repo(repo).each do |pull_request|
+        begin
+          cheking = CLIENT.pull_request(repo, pull_request.pr_id)
+          if cheking.merged.to_s == 'true'
+            @mainController.update_pr_state pull_request, 'merged'
+          else
+            @mainController.update_pr_state pull_request, cheking.state
+          end
+        rescue
+          puts "Pull request #{pull_request.pr_id} dose not exist in #{repo}"
         end
       end
     end
   end
 
-  def get_all_github_pr repo
+  def get_all_github_pr (repo)
     begin
       pulls = CLIENT.pull_requests repo
       if pulls != nil
@@ -91,16 +95,19 @@ class OctokitClient
 
   end
 
-  def get_github_user_by_login login
-    CLIENT.user(login)
+  def get_github_user_by_login (login)
+    CLIENT.user login
   end
 
-  def get_github_pr_by_number repo, number
-    CLIENT.pull_request(repo, number)
+  def get_github_pr_by_number (repo, number)
+    begin
+      CLIENT.pull_request repo, number
+    rescue
+    end
   end
 
-  def check_pr_for_existing pr_data
-    @mainController.create_or_update_pr pr_data
+  def check_pr_for_existing (pr_data, repo)
+    @mainController.create_or_update_pr pr_data, repo
   end
 
 end

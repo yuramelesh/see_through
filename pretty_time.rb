@@ -1,5 +1,5 @@
 class PrettyTime
-  def duration time
+  def duration (time)
     secs  = time.to_int
     mins  = secs / 60
     hours = mins / 60

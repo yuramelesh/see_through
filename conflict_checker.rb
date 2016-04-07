@@ -46,7 +46,7 @@ class ConflictChecker
     end
   end
 
-  def check_for_new_conflicts db_pull_requests, github_pull_requests, repo
+  def check_for_new_conflicts (db_pull_requests, github_pull_requests, repo)
     puts "Checking stack"
     db_pull_requests.each do |db_pr|
       if db_pr.mergeable == true
@@ -66,7 +66,7 @@ class ConflictChecker
     end
   end
 
-  def check_pull_requests_state pull_requests, repository
+  def check_pull_requests_state (pull_requests, repository)
 
     pull_requests.each do |pr|
 
@@ -79,7 +79,7 @@ class ConflictChecker
 
         github_request = @client.get_github_pr_by_number repository, pr
 
-        if github_request.merged == true
+        if github_request.merged
           puts "merged: #{github_request.merged}"
         else
           puts 'merged: false'
