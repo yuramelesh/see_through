@@ -3,6 +3,8 @@ require_relative 'octokit_client'
 
 class MainController
 
+  @client =
+
   def initialize
     @db = Database.new
   end
@@ -13,30 +15,34 @@ class MainController
 
   def checking_pr_for_changes (pr_data, repo)
 
-    existing_pull_requests = get_all_pr
+    existing_pull_requests = get_pr_by_repo repo
 
     existing_pull_requests.each do |pull_request|
       if pr_data.number.to_i == pull_request.pr_id.to_i
+
+        pr = CLIENT.pull_request(repo, pr_data.number)
+
         if pull_request.repo != repo
           pull_request.update(repo: repo)
         end
-        if pull_request.merged != pr_data[:merged]
-          pull_request.update(merged: pr_data[:merged])
+
+        if pull_request.merged != pr.merged
+          pull_request.update(merged: pr.merged)
         end
-        if pull_request.state != pr_data[:state]
-          pull_request.update(state: pr_data[:state])
+        if pull_request.state != pr.state
+          pull_request.update(state: pr.state)
         end
-        if pull_request.mergeable != pr_data[:mergeable]
-          pull_request.update(mergeable: pr_data[:mergeable])
+        if pull_request.mergeable != pr.mergeable
+          pull_request.update(mergeable: pr.mergeable)
         end
-        if pull_request.mergeable_state != pr_data[:mergeable_state]
-          pull_request.update(mergeable_state: pr_data[:mergeable_state])
+        if pull_request.mergeable_state != pr.mergeable_state
+          pull_request.update(mergeable_state: pr.mergeable_state)
         end
-        if pull_request.committer != pr_data[:committer]
-          pull_request.update(committer: pr_data[:committer])
+        if pull_request.committer != pr.committer
+          pull_request.update(committer: pr.committer)
         end
-        if pull_request.labels != pr_data[:label]
-          pull_request.update(labels: pr_data[:label])
+        if pull_request.labels != pr.label
+          pull_request.update(labels: pr.label)
         end
       end
     end

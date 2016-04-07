@@ -23,7 +23,7 @@ class ConflictChecker
       repository = repo.repository_name
 
       github_pull_requests = @client.get_all_github_pr repository
-      db_pull_requests = @controller.get_all_pr
+      db_pull_requests = @controller.get_pr_by_repo repository
 
       github_pr_numbers = [].to_set
       db_pr_numbers = [].to_set
@@ -47,9 +47,9 @@ class ConflictChecker
   end
 
   def check_for_new_conflicts (db_pull_requests, github_pull_requests, repo)
-    puts "Checking stack"
     db_pull_requests.each do |db_pr|
-      if db_pr.mergeable == true
+      if db_pr.mergeable == 'true'
+        puts "Checking stack"
         github_pull_requests.each do |gh_pr|
           if db_pr.pr_id.to_i == gh_pr.number.to_i
             this_pull = @client.get_github_pr_by_number repo, db_pr.pr_id

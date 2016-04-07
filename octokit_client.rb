@@ -59,7 +59,9 @@ class OctokitClient
         end
 
         pr_data[:committers] = committers
+        pr_data
       end
+      pr_data
     rescue
       puts "No pull requests in #{repo}"
     end
@@ -69,16 +71,13 @@ class OctokitClient
   def check_pr_status (repo)
     begin
       @mainController.get_pr_by_repo(repo).each do |pull_request|
-        begin
-          cheking = CLIENT.pull_request(repo, pull_request.pr_id)
-          if cheking.merged.to_s == 'true'
-            @mainController.update_pr_state pull_request, 'merged'
-          else
-            @mainController.update_pr_state pull_request, cheking.state
-          end
-        rescue
-          puts "Pull request #{pull_request.pr_id} dose not exist in #{repo}"
+        checking = CLIENT.pull_request(repo, pull_request.pr_id)
+        if checking.merged.to_s == 'true'
+          @mainController.update_pr_state pull_request, 'merged'
+        else
+          @mainController.update_pr_state pull_request, checking.state
         end
+
       end
     end
   end
@@ -100,10 +99,7 @@ class OctokitClient
   end
 
   def get_github_pr_by_number (repo, number)
-    begin
-      CLIENT.pull_request repo, number
-    rescue
-    end
+    CLIENT.pull_request repo, number
   end
 
   def check_pr_for_existing (pr_data, repo)
