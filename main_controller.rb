@@ -3,8 +3,6 @@ require_relative 'octokit_client'
 
 class MainController
 
-  @client =
-
   def initialize
     @db = Database.new
   end
@@ -70,6 +68,10 @@ class MainController
     daily_report = user.enable
     user_to_update = @db.get_user_by_login user.login
     user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
+  end
+
+  def get_repo_pr_by_mergeable (repo, state)
+    @db.get_repo_pr_by_mergeable repo, state
   end
 
   def get_repo_pr_by_state (repo, state)

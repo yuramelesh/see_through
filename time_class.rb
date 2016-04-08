@@ -1,4 +1,8 @@
-class PrettyTime
+require 'time'
+require 'time_difference'
+
+class TimeClass
+
   def duration (time)
     secs  = time.to_int
     mins  = secs / 60
@@ -19,4 +23,12 @@ class PrettyTime
       "just now"
     end
   end
+
+  def get_conflict_time pull_request
+    start_time = pull_request.added_to_database
+    Time.parse(start_time)
+    conflict_time = TimeDifference.between(start_time, Time.now).in_seconds.to_i
+    duration conflict_time
+  end
+
 end

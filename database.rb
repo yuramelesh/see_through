@@ -76,11 +76,11 @@ class Database
     Repository.all
   end
 
-  def get_repo_pr_by_mergeable repo, state
+  def get_repo_pr_by_mergeable (repo, state)
     PullRequest.where(repo: repo, mergeable: state)
   end
 
-  def get_pull_requests_by_mergeable state
+  def get_pull_requests_by_mergeable (state)
     PullRequest.where(mergeable: state)
   end
 

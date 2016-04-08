@@ -7,7 +7,7 @@ CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 class OctokitClient
 
   def initialize
-    @mainController = MainController.new
+    @main_controller = MainController.new
   end
 
   def get_github_pr repo
@@ -70,12 +70,12 @@ class OctokitClient
 
   def check_pr_status (repo)
     begin
-      @mainController.get_pr_by_repo(repo).each do |pull_request|
+      @main_controller.get_pr_by_repo(repo).each do |pull_request|
         checking = CLIENT.pull_request(repo, pull_request.pr_id)
         if checking.merged.to_s == 'true'
-          @mainController.update_pr_state pull_request, 'merged'
+          @main_controller.update_pr_state pull_request, 'merged'
         else
-          @mainController.update_pr_state pull_request, checking.state
+          @main_controller.update_pr_state pull_request, checking.state
         end
       end
     end
@@ -101,7 +101,7 @@ class OctokitClient
   end
 
   def check_pr_for_existing (pr_data, repo)
-    @mainController.create_or_update_pr pr_data, repo
+    @main_controller.create_or_update_pr pr_data, repo
   end
 
 end

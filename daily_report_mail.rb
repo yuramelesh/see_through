@@ -1,9 +1,7 @@
 require 'net/smtp'
-require 'time'
-require 'time_difference'
 require_relative 'config/config_reader'
 require_relative 'main_controller'
-require_relative 'pretty_time'
+require_relative 'time_class'
 require_relative 'mailler'
 
 # def send_time_check user
@@ -13,13 +11,7 @@ require_relative 'mailler'
 
 @email = Email.new
 @main_controller = MainController.new
-
-def get_time_in_conflict pull_request
-  start_time = pull_request.added_to_database
-  Time.parse(start_time)
-  conflict_time = TimeDifference.between(start_time, Time.now).in_seconds.to_i
-  PrettyTime.new.duration conflict_time
-end
+@time = TimeClass.new
 
 def get_mergeable_field pull_request, conflict
   mergeable = pull_request.mergeable
@@ -28,7 +20,6 @@ def get_mergeable_field pull_request, conflict
   else
     merge_status = "<span style='color:red;'><b>Yes</b></span> <b>#{conflict}</b>"
   end
-
   merge_status
 end
 
@@ -122,7 +113,7 @@ def create_mail_message user_to, repo
   your_block = []
 
   pull_requests.each do |pull_request|
-    conflict = get_time_in_conflict pull_request
+    conflict = @time.get_conflict_time pull_request
     merge_status = get_mergeable_field pull_request, conflict
     importance = get_importance pull_request
     merge_state = get_mergeable_state importance, conflict
