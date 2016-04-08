@@ -131,7 +131,6 @@ EOF
       recipients.each do |user|
         @email.send_mail(message, user)
       end
-
     end
   end
 end
