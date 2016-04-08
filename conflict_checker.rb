@@ -9,7 +9,6 @@ require_relative 'time_class'
 class ConflictChecker
 
   def initialize
-
     @email = Email.new
     @repositories = Config_reader.new.get_repos
     @client = OctokitClient.new
@@ -58,14 +57,19 @@ class ConflictChecker
         <p>Author: #{pr.user.login}</p><br>"
         end
 
+        recipients = [].to_set
+
         check_for_new_conflicts(db_pull_requests, github_pull_requests, repository).each do |pr|
           pull = @controller.get_pr_by_id pr.number
+          recipients.add(@controller.get_user_by_login(pull[0].author)[:user_email])
           conflict << "<h3>Pull Request -  #{pull[0][:title]} <a href='https://github.com/#{repository}/pull/#{pull[0].pr_id}/'>##{pull[0].pr_id}</a></h3>
         <p>Author: #{pull[0].author}</p>
         <p>Time in conflict: <b><span style='color: red;'> #{@time.get_conflict_time(pull[0])}</span></b></p><br>"
         end
 
-        create_mail repo, merged, conflict, old_pr_block
+
+        create_mail repo, merged, conflict, old_pr_block, recipients
+
       end
     end
   end
@@ -98,12 +102,13 @@ class ConflictChecker
     return pull
   end
 
-  def create_mail (repo, merged, conflict, old_pr_block)
+  def create_mail (repo, merged, conflict, old_pr_block, recipients)
+
     if merged.length > 2
       message = <<EOF
 From: #{repo.repository_name} <FROM@vgs.io>
 To: WorkGroup
-Subject: Merge Conflict - #{repo.repository_name}
+Subject: Merge Conflicts - #{repo.repository_name}
 Mime-Version: 1.0
 Content-Type: text/html
 
@@ -118,16 +123,17 @@ Content-Type: text/html
       #{old_pr_block}
 
 EOF
-      recipients = @controller.get_recipients_list
-      recipients.each do |user|
-        send_mail message, user
+
+      Config_reader.new.get_users_from_config_yml.each do |user|
+        @controller.sync_user_with_config user
       end
+
+      recipients.each do |user|
+        @email.send_mail(message, user)
+      end
+
     end
   end
-end
-
-def send_mail (message, user_to)
-  @email.send_mail(message, user_to.user_email)
 end
 
 ConflictChecker.new

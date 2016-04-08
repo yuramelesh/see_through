@@ -101,4 +101,8 @@ class MainController
   def get_recipients_list
     @db.get_recipients
   end
+
+  def get_user_by_login login
+    @db.get_user_by_login login
+  end
 end
