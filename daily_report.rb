@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require_relative 'mailing'
+require_relative 'daily_report_mail'
 require_relative 'config/config_reader'
 require_relative 'octokit_client'
 require_relative 'main_controller'

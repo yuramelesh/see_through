@@ -91,7 +91,6 @@ class OctokitClient
     rescue
       puts "No pull requests in #{repo}"
     end
-
   end
 
   def get_github_user_by_login (login)

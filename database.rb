@@ -65,6 +65,10 @@ class Database
   end
 
 # Getters
+  def get_repo_pr_by_state (repo, state)
+    PullRequest.where(repo: repo, state: state)
+  end
+  
   def get_pull_requests_by_repo (repo)
     PullRequest.where(repo: repo)
   end

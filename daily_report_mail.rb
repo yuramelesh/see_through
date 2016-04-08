@@ -12,6 +12,7 @@ require_relative 'mailler'
 # end
 
 @email = Email.new
+@main_controller = MainController.new
 
 def get_time_in_conflict pull_request
   start_time = pull_request.added_to_database
@@ -92,7 +93,7 @@ end
 def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
-  MainController.new.get_pr_by_state('merged').each do |pull_request|
+  @main_controller.get_repo_pr_by_state(repo, 'merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"
   end
@@ -117,7 +118,7 @@ end
 
 def create_mail_message user_to, repo
 
-  pull_requests = MainController.new.get_pr_by_state 'open'
+  pull_requests = @main_controller.get_repo_pr_by_state repo, 'open'
   other_block = []
   your_block = []
 

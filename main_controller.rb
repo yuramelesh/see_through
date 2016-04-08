@@ -69,6 +69,10 @@ class MainController
     user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
   end
 
+  def get_repo_pr_by_state (repo, state)
+    @db.get_repo_pr_by_state repo, state
+  end
+
   def get_all_pr
     @db.get_all_pull_requests
   end
