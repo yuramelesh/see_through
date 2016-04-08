@@ -20,9 +20,11 @@ class ConflictChecker
   end
 
   def start
+
     @repositories.each do |repo|
 
       repository = repo.repository_name
+      old_pr = @db.get_repo_pr_by_mergeable repo, 'false'
 
       github_pull_requests = @client.get_all_github_pr repository
       db_pull_requests = @controller.get_pr_by_repo repository
@@ -96,7 +98,7 @@ class ConflictChecker
       message = <<EOF
 From: #{repo.repository_name} <FROM@vgs.io>
 To: WorkGroup
-Subject: Status Report - #{repo.repository_name}
+Subject: Merge Conflict - #{repo.repository_name}
 Mime-Version: 1.0
 Content-Type: text/html
 

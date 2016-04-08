@@ -43,7 +43,6 @@ def get_importance pull_request
     else
       importance = 3
   end
-
   importance
 end
 

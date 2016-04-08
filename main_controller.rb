@@ -25,7 +25,9 @@ class MainController
         if pull_request.repo != repo
           pull_request.update(repo: repo)
         end
-
+        if pull_request.author != pr.user.login
+          pull_request.update(author: pr.user.login)
+        end
         if pull_request.merged != pr.merged
           pull_request.update(merged: pr.merged)
         end
@@ -49,6 +51,7 @@ class MainController
   end
 
   def create_or_update_pr (pr_data, repo)
+
     if pr_data.length != 0
       if @db.get_pull_request_by_id pr_data[:number]
         checking_pr_for_changes pr_data, repo

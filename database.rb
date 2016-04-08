@@ -28,7 +28,7 @@ class Database
         :repo => repo,
         :title => pull_request_data[:title],
         :pr_id => pull_request_data[:number],
-        :author => pull_request_data[:user_login],
+        :author => pull_request_data[:user][:login],
         :merged => pull_request_data[:merged],
         :mergeable => pull_request_data[:mergeable],
         :mergeable_state => pull_request_data[:mergeable_state],
@@ -40,7 +40,6 @@ class Database
         :updated_at => pull_request_data[:updated_at],
         :added_to_database => Time.new,
     )
-
     commentors = pull_request_data[:commentors].to_a
     # build_list_of_commentors commentors
   end
@@ -68,13 +67,17 @@ class Database
   def get_repo_pr_by_state (repo, state)
     PullRequest.where(repo: repo, state: state)
   end
-  
+
   def get_pull_requests_by_repo (repo)
     PullRequest.where(repo: repo)
   end
 
   def get_all_repositories
     Repository.all
+  end
+
+  def get_repo_pr_by_mergeable repo, state
+    PullRequest.where(repo: repo, mergeable: state)
   end
 
   def get_pull_requests_by_mergeable state

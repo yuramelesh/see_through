@@ -77,7 +77,6 @@ class OctokitClient
         else
           @mainController.update_pr_state pull_request, checking.state
         end
-
       end
     end
   end
