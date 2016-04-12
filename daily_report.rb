@@ -4,7 +4,9 @@ require_relative 'daily_report_mail'
 require_relative 'config/config_reader'
 require_relative 'octokit_client'
 require_relative 'main_controller'
+require_relative 'time_class'
 
+@time = TimeClass.new
 config = Config_reader.new
 repositories = config.get_repos
 users_from_yml = config.get_users_from_config_yml
@@ -18,7 +20,11 @@ end
 def mail_sending (repo)
   recipients = @controller.get_recipients_list
   recipients.each do |user|
-    send_mail user, repo
+    if @time.check_time(user.notify_at.to_s)
+      send_mail user, repo
+    else
+      puts 'false'
+    end
   end
 end
 

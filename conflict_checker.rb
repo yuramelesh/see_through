@@ -67,7 +67,6 @@ class ConflictChecker
         <p>Time in conflict: <b><span style='color: red;'> #{@time.get_conflict_time(pull[0])}</span></b></p><br>"
         end
 
-
         create_mail repo, merged, conflict, old_pr_block, recipients
 
       end
