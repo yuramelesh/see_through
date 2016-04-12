@@ -32,14 +32,14 @@ class Database
         :mergeable => pr.mergeable,
         :mergeable_state => pr.mergeable_state,
         :state => pull_request_data[:state],
-        :pr_commentors => pull_request_data[:commentors].to_a.join(', '),
+        # :pr_commentors => pull_request_data[:commentors].to_a.join(', '),
         :committer => pull_request_data[:committer].to_a.join(', '),
         :labels => pr.head.label,
         :created_at => pull_request_data[:created_at],
         :updated_at => pull_request_data[:updated_at],
         :added_to_database => Time.new,
     )
-    # commentors = pull_request_data[:commentors].to_a
+    commentors = pull_request_data[:commentors].to_a
     # build_list_of_commentors commentors
   end
 

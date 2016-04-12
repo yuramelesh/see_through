@@ -32,10 +32,7 @@ class TimeClass
   end
 
   def check_time (user_tz)
-
     local_time = Time.now.getlocal(user_tz)
-    puts local_time.hour
-
     if local_time.hour == 9
       return true
     end

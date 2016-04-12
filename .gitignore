@@ -68,3 +68,4 @@ data.db
 database.log
 
 scripts/
+ops/

@@ -28,6 +28,7 @@ def mail_sending (repo)
   end
 end
 
+
 repositories.each do |repo|
 
   repo = repo.repository_name
