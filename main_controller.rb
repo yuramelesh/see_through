@@ -8,7 +8,8 @@ class MainController
   end
 
   def add_new_pr (pr_data, repo)
-    @db.create_pull_request pr_data, repo
+    pr = CLIENT.pull_request(repo, pr_data.number)
+    @db.create_pull_request pr_data, repo, pr
   end
 
   def checking_pr_for_changes (pr_data, repo)
@@ -67,7 +68,11 @@ class MainController
   def sync_user_with_config (user)
     daily_report = user.enable
     user_to_update = @db.get_user_by_login user.login
-    user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
+    if user_to_update == nil
+      @db.create_new_user user
+    else
+      user_to_update.update(enable: daily_report, notify_at: user.tz_shift, user_email: user.email)
+    end
   end
 
   def get_repo_pr_by_mergeable (repo, state)
