@@ -66,6 +66,3 @@ target/
 Gemfile.lock
 data.db
 database.log
-
-scripts/
-ops
