@@ -6,9 +6,6 @@ class Database
     init_database
   end
 
-  class Repository < ActiveRecord::Base
-  end
-
   class User < ActiveRecord::Base
     belongs_to :commentors
   end
@@ -20,6 +17,12 @@ class Database
   class Commentor < ActiveRecord::Base
     belongs_to :pull_request
     has_one :users
+  end
+
+  class Repository < ActiveRecord::Base
+  end
+
+  class DailyReport < ActiveRecord::Base
   end
 
   def create_pull_request (pull_request_data, repo, pr)
@@ -52,10 +55,22 @@ class Database
     )
   end
 
+  def create_daily_report (user_login, sent_time)
+    DailyReport.create(
+        :user_name => user_login,
+        :sent_at => sent_time,
+    )
+  end
+
   def create_repository (repository)
     Repository.create(
         :repo => repository
     )
+  end
+
+  def update_daily_report_date (user_login, sent_time)
+    dr = DailyReport.where(user_name: user_login).first
+    dr.update(:sent_at => sent_time)
   end
 
   def update_pull_request_state (pull_request, state)
@@ -63,6 +78,14 @@ class Database
   end
 
 # Getters
+  def get_daily_report_state (user_login)
+    DailyReport.where(user_name: user_login).first
+  end
+
+  def get_daily_reports_state
+    DailyReport.all
+  end
+
   def get_repo_pr_by_state (repo, state)
     PullRequest.where(repo: repo, state: state)
   end
@@ -159,6 +182,17 @@ class Database
           table.column :pull_request_id, :integer #foreign key
           table.column :user_id, :string
         end
+      end
+
+      def create_daily_reports_table
+        create_table :daily_reports do |table|
+          table.column :user_name, :string
+          table.column :sent_at, :string
+        end
+      end
+
+      unless ActiveRecord::Base.connection.tables.include? 'daily_reports'
+        create_daily_reports_table
       end
 
       unless ActiveRecord::Base.connection.tables.include? 'pull_requests'

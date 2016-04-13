@@ -38,4 +38,8 @@ class TimeClass
     end
     return false
   end
+
+  def check_sent_at (sent_at)
+    TimeDifference.between(Time.new.utc, sent_at).in_hours.to_i >= 24
+  end
 end
