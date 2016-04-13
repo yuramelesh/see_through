@@ -19,38 +19,45 @@ users_from_yml.each do |user|
   @controller.sync_user_with_config user
 end
 
-recipients = @controller.get_recipients_list
-
-def mail_sending (repo, recipients)
-  recipients.each do |user|
-    daily_report = @db.get_daily_report_state(user.user_login)
-    if daily_report != nil
-      if @time.check_sent_at(daily_report.sent_at)
-        send_mail user, repo
-      end
-      @db.update_daily_report_date(user.user_login, Time.new.utc)
-    else
+def mail_sending (repo, user)
+  daily_report = @db.get_daily_report_state(user.user_login)
+  if daily_report != nil
+    if @time.check_sent_at(daily_report.sent_at)
       send_mail user, repo
-      @db.create_daily_report(user.user_login, Time.new.utc)
     end
+    @db.update_daily_report_date(user.user_login, Time.new.utc)
+  else
+    send_mail user, repo
+    @db.create_daily_report(user.user_login, Time.new.utc)
   end
 end
 
-recipients.each do |user|
-  if @time.check_time(user.notify_at.to_s)
-    if @time.check_sent_at(@db.get_daily_report_state(user.user_login).sent_at)
-      repositories.each do |repos|
-        repo = repos.repository_name
-        pr_data = @octokit_client.get_all_github_pr repo
-        if pr_data != nil
-          pr_data.each do |pr|
-            @octokit_client.check_pr_for_existing pr, repo
-            @octokit_client.check_pr_status repo
+repositories.each do |repos|
+  if repos.recipients != nil
+    data_existing = false
+    repos.recipients.each do |repo_user|
+      user = @controller.get_user_by_login(repo_user)
+      if user.enable
+
+        def get_pr repo
+          pr_data = @octokit_client.get_all_github_pr repo
+          if pr_data != nil
+            pr_data.each do |pr|
+              @octokit_client.check_pr_for_existing pr, repo
+              @octokit_client.check_pr_status repo
+            end
           end
-          mail_sending repo, recipients
+        end
+
+        if @time.check_time(user.notify_at.to_s)
+          repo = repos.repository_name
+          if !data_existing
+            get_pr repo
+            data_existing = true
+          end
+          mail_sending repo, user
         end
       end
-      break
     end
   end
 end
