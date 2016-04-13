@@ -63,5 +63,6 @@ target/
 .idea
 *~
 *.yml
+Gemfile.lock
 data.db
 database.log

@@ -7,7 +7,7 @@ CLIENT = Octokit::Client.new(:access_token => ENV['SEE_THROUGH_TOKEN'])
 class OctokitClient
 
   def initialize
-    @mainController = MainController.new
+    @main_controller = MainController.new
   end
 
   def get_github_pr repo
@@ -59,27 +59,29 @@ class OctokitClient
         end
 
         pr_data[:committers] = committers
+        pr_data
       end
+      pr_data
     rescue
       puts "No pull requests in #{repo}"
     end
     pr_data
   end
 
-  def check_pr_status repo
+  def check_pr_status (repo)
     begin
-      @mainController.get_all_pr.each do |pull_request|
-        cheking = CLIENT.pull_request(repo, pull_request.pr_id)
-        if cheking.merged.to_s == 'true'
-          @mainController.update_pr_state pull_request, 'merged'
+      @main_controller.get_pr_by_repo(repo).each do |pull_request|
+        checking = CLIENT.pull_request(repo, pull_request.pr_id)
+        if checking.merged.to_s == 'true'
+          @main_controller.update_pr_state pull_request, 'merged'
         else
-          @mainController.update_pr_state pull_request, cheking.state
+          @main_controller.update_pr_state pull_request, checking.state
         end
       end
     end
   end
 
-  def get_all_github_pr repo
+  def get_all_github_pr (repo)
     begin
       pulls = CLIENT.pull_requests repo
       if pulls != nil
@@ -88,19 +90,18 @@ class OctokitClient
     rescue
       puts "No pull requests in #{repo}"
     end
-
   end
 
-  def get_github_user_by_login login
-    CLIENT.user(login)
+  def get_github_user_by_login (login)
+    CLIENT.user login
   end
 
-  def get_github_pr_by_number repo, number
-    CLIENT.pull_request(repo, number)
+  def get_github_pr_by_number (repo, number)
+    CLIENT.pull_request repo, number
   end
 
-  def check_pr_for_existing pr_data
-    @mainController.create_or_update_pr pr_data
+  def check_pr_for_existing (pr_data, repo)
+    @main_controller.create_or_update_pr pr_data, repo
   end
 
 end

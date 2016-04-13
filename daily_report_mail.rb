@@ -1,21 +1,17 @@
 require 'net/smtp'
-require 'time'
-require 'time_difference'
 require_relative 'config/config_reader'
 require_relative 'main_controller'
-require_relative 'pretty_time'
+require_relative 'time_class'
+require_relative 'mailler'
 
 # def send_time_check user
 #   utc_time = Time.now.getutc
 #   utc_time.strftime( "%H" )
 # end
 
-def get_time_in_conflict pull_request
-  start_time = pull_request.added_to_database
-  Time.parse(start_time)
-  conflict_time = TimeDifference.between(start_time, Time.now).in_seconds.to_i
-  PrettyTime.new.duration conflict_time
-end
+@email = Email.new
+@main_controller = MainController.new
+@time = TimeClass.new
 
 def get_mergeable_field pull_request, conflict
   mergeable = pull_request.mergeable
@@ -24,7 +20,6 @@ def get_mergeable_field pull_request, conflict
   else
     merge_status = "<span style='color:red;'><b>Yes</b></span> <b>#{conflict}</b>"
   end
-
   merge_status
 end
 
@@ -39,7 +34,6 @@ def get_importance pull_request
     else
       importance = 3
   end
-
   importance
 end
 
@@ -89,7 +83,7 @@ end
 def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
-  MainController.new.get_pr_by_state('merged').each do |pull_request|
+  @main_controller.get_repo_pr_by_state(repo, 'merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
     <p>Author: #{pull_request.author}</p>"
   end
@@ -114,12 +108,12 @@ end
 
 def create_mail_message user_to, repo
 
-  pull_requests = MainController.new.get_pr_by_state 'open'
+  pull_requests = @main_controller.get_repo_pr_by_state repo, 'open'
   other_block = []
   your_block = []
 
   pull_requests.each do |pull_request|
-    conflict = get_time_in_conflict pull_request
+    conflict = @time.get_conflict_time pull_request
     merge_status = get_mergeable_field pull_request, conflict
     importance = get_importance pull_request
     merge_state = get_mergeable_state importance, conflict
@@ -176,9 +170,5 @@ end
 
 def send_mail user_to, repo
   message = create_mail_message user_to, repo
-  smtp = Net::SMTP.new('smtp.mandrillapp.com', 587)
-  smtp.enable_starttls
-  smtp.start('SeeThrough', ENV['SEE_THROUGH_EMAIL'], ENV['SEE_THROUGH_EMAIL_PASS'], :login) do |smtp|
-    smtp.send_message message, ENV['SEE_THROUGH_EMAIL'], user_to.user_email
-  end
+  @email.send_mail(message, user_to.user_email)
 end
