@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'time_difference'
+require 'logger'
 require_relative 'daily_report_mail'
 require_relative 'config/config_reader'
 require_relative 'octokit_client'
@@ -14,6 +15,9 @@ users_from_yml = config.get_users_from_config_yml
 @controller = MainController.new
 @octokit_client = OctokitClient.new
 @db = Database.new
+@logger = Logger.new('logfile.log')
+
+@logger.info('daily_report start')
 
 users_from_yml.each do |user|
   @controller.sync_user_with_config user
@@ -61,3 +65,5 @@ repositories.each do |repos|
     end
   end
 end
+
+@logger.info('daily_report end')

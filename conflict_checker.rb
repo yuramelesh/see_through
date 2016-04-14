@@ -14,12 +14,15 @@ class ConflictChecker
     @client = OctokitClient.new
     @controller = MainController.new
     @time = TimeClass.new
+    @logger = Logger.new('logfile.log')
 
     start
 
   end
 
   def start
+
+    @logger.info('conflict_checker start')
 
     @repositories.each do |repo|
 
@@ -71,6 +74,7 @@ class ConflictChecker
 
       end
     end
+    @logger.info('conflict_checker end')
   end
 
   def check_pull_requests_state (pull_requests, repository)
