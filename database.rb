@@ -38,11 +38,11 @@ class Database
         # :pr_commentors => pull_request_data[:commentors].to_a.join(', '),
         :committer => pull_request_data[:committer].to_a.join(', '),
         :labels => pr.head.label,
-        :created_at => pull_request_data[:created_at],
-        :updated_at => pull_request_data[:updated_at],
+        :pr_create_time => pull_request_data[:created_at],
+        :pr_update_time => pull_request_data[:updated_at],
         :added_to_database => Time.new,
     )
-    commentors = pull_request_data[:commentors].to_a
+    # commentors = pull_request_data[:commentors].to_a
     # build_list_of_commentors commentors
   end
 
@@ -50,6 +50,7 @@ class Database
     User.create(
         :user_login => user.login,
         :user_email => user.email,
+        :notify_at => user.tz_shift,
         :git_hub_id => user.id,
         :enable => false,
     )
@@ -139,77 +140,89 @@ class Database
         :database => 'data.db'
     )
 
-    ActiveRecord::Schema.define do
+    ActiveRecord::Schema.new.migrations_paths
 
-      def create_pull_request_table
-        create_table :pull_requests do |table|
-          table.column :repo, :string, :null => true
-          table.column :title, :string, :null => false
-          table.column :pr_id, :string, :null => false
-          table.column :author, :string, :null => false
-          table.column :merged, :boolean, :null => false
-          table.column :mergeable, :boolean, :null => true
-          table.column :mergeable_state, :string, :null => true
-          table.column :state, :string, :null => true
-          table.column :pr_commentors, :string, :null => true
-          table.column :committer, :string, :null => true
-          table.column :labels, :string, :null => true
-          table.column :created_at, :string, :null => true
-          table.column :updated_at, :string, :null => true
-          table.column :added_to_database, :string #:null => true
-        end
-      end
-
-      def create_users_table
-        create_table :users do |table|
-          table.column :user_login, :string, unique: true
-          table.column :user_email, :string
-          table.column :git_email, :string, :null => true
-          table.column :git_hub_id, :integer, :null => true
-          table.column :notify_at, :string
-          table.column :enable, :boolean
-        end
-      end
-
-      def create_repositories_table
-        create_table :repositories do |table|
-          table.column :repo, :string
-        end
-      end
-
-      def create_commenters_table
-        create_table :commentors do |table|
-          table.column :pull_request_id, :integer #foreign key
-          table.column :user_id, :string
-        end
-      end
-
-      def create_daily_reports_table
-        create_table :daily_reports do |table|
-          table.column :user_name, :string
-          table.column :sent_at, :string
-        end
-      end
-
-      unless ActiveRecord::Base.connection.tables.include? 'daily_reports'
-        create_daily_reports_table
-      end
-
-      unless ActiveRecord::Base.connection.tables.include? 'pull_requests'
-        create_pull_request_table
-      end
-
-      unless ActiveRecord::Base.connection.tables.include? 'users'
-        create_users_table
-      end
-
-      unless ActiveRecord::Base.connection.tables.include? 'commentors'
-        create_commenters_table
-      end
-
-      unless ActiveRecord::Base.connection.tables.include? 'repositories'
-        create_repositories_table
-      end
-    end
+      # ActiveRecord::Schema.define do
+    #
+    #   def create_pull_request_table
+    #     create_table :pull_requests do |table|
+    #       table.column :repo, :string, :null => true
+    #       table.column :title, :string, :null => false
+    #       table.column :pr_id, :string, :null => false
+    #       table.column :author, :string, :null => false
+    #       table.column :merged, :boolean, :null => false
+    #       table.column :mergeable, :boolean, :null => true
+    #       table.column :mergeable_state, :string, :null => true
+    #       table.column :state, :string, :null => true
+    #       table.column :pr_commentors, :string, :null => true
+    #       table.column :committer, :string, :null => true
+    #       table.column :labels, :string, :null => true
+    #       table.column :pr_create_time, :string, :null => true
+    #       table.column :pr_updated_time, :string, :null => true
+    #       table.column :added_to_database, :string #:null => true
+    #
+    #       table.timestamps :null => false
+    #     end
+    #   end
+    #
+    #   def create_users_table
+    #     create_table :users do |table|
+    #       table.column :user_login, :string, unique: true
+    #       table.column :user_email, :string
+    #       table.column :git_email, :string, :null => true
+    #       table.column :git_hub_id, :integer, :null => true
+    #       table.column :notify_at, :string
+    #       table.column :enable, :boolean
+    #
+    #       table.timestamps :null => false
+    #     end
+    #   end
+    #
+    #   def create_repositories_table
+    #     create_table :repositories do |table|
+    #       table.column :repo, :string
+    #
+    #       table.timestamps :null => false
+    #     end
+    #   end
+    #
+    #   def create_commenters_table
+    #     create_table :commentors do |table|
+    #       table.column :pull_request_id, :integer #foreign key
+    #       table.column :user_id, :string
+    #
+    #       table.timestamps :null => false
+    #     end
+    #   end
+    #
+    #   def create_daily_reports_table
+    #     create_table :daily_reports do |table|
+    #       table.column :user_name, :string
+    #       table.column :sent_at, :string
+    #
+    #       table.timestamps :null => false
+    #     end
+    #   end
+    #
+    #   unless ActiveRecord::Base.connection.tables.include? 'daily_reports'
+    #     create_daily_reports_table
+    #   end
+    #
+    #   unless ActiveRecord::Base.connection.tables.include? 'pull_requests'
+    #     create_pull_request_table
+    #   end
+    #
+    #   unless ActiveRecord::Base.connection.tables.include? 'users'
+    #     create_users_table
+    #   end
+    #
+    #   unless ActiveRecord::Base.connection.tables.include? 'commentors'
+    #     create_commenters_table
+    #   end
+    #
+    #   unless ActiveRecord::Base.connection.tables.include? 'repositories'
+    #     create_repositories_table
+    #   end
+    # end
   end
 end

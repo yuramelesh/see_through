@@ -26,8 +26,8 @@ class OctokitClient
         pr_data[:merged] = pr_additional_data.merged
         pr_data[:mergeable] = pr_additional_data.mergeable
         pr_data[:mergeable_state] = pr_additional_data.mergeable_state
-        pr_data[:created_at] = pr_additional_data.created_at
-        pr_data[:updated_at] = pr_additional_data.updated_at
+        pr_data[:pr_create_time] = pr_additional_data.created_at
+        pr_data[:pr_update_time] = pr_additional_data.updated_at
         pr_data[:state] = pr_additional_data.state
 
         iss_comments = CLIENT.issue_comments(repo, pr.number)
