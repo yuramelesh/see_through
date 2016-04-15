@@ -62,7 +62,7 @@ target/
 .ipynb_checkpoints
 .idea
 *~
-*.yml
+conf.yml
 Gemfile.lock
 data.db
 database.log

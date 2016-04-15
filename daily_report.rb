@@ -26,7 +26,7 @@ end
 def mail_sending (repo, user)
   daily_report = @db.get_daily_report_state(user.user_login)
   if daily_report != nil
-    if true#@time.check_sent_at(daily_report.sent_at)
+    if @time.check_sent_at(daily_report.sent_at)
       send_mail user, repo
     end
     @db.update_daily_report_date(user.user_login, Time.new.utc)
@@ -53,7 +53,7 @@ repositories.each do |repos|
           end
         end
 
-        if true #@time.check_time(user.notify_at.to_s)
+        if @time.check_time(user.notify_at.to_s)
           repo = repos.repository_name
           if true #!data_existing
             get_pr repo

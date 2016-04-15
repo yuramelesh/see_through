@@ -4,7 +4,7 @@ require_relative 'profile'
 class Config_reader
 
   def initialize
-    @config = YAML.load_file('config.yml')
+    @config = YAML.load_file('conf.yml')
     @repositories = []
     @profiles = []
   end
