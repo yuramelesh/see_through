@@ -137,7 +137,7 @@ class Database
 
     ActiveRecord::Base.establish_connection(
         :adapter => 'sqlite3',
-        :database => 'data.db'
+        :database => 'db/data.db'
     )
 
     ActiveRecord::Schema.new.migrations_paths
