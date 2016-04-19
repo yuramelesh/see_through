@@ -10,7 +10,6 @@ sudo apt-get install -y ruby-all-dev
 
 echo "------ Install gems ------"
 
-
 sudo gem install activerecord
 sudo gem install octokit
 sudo apt-get install libsqlite3-dev
