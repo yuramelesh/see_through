@@ -4,14 +4,14 @@ require_relative 'profile'
 class Config_reader
 
   def initialize
-    @config = YAML.load_file('config.yml')
+    @config = YAML.load_file('conf.yml')
     @repositories = []
     @profiles = []
   end
 
   def read_repos
     @config['repositories'].each do |repository|
-      @repositories.push(Repository.new(repository['name']))
+      @repositories.push(Repository.new(repository['name'], repository['recepients']))
     end
   end
 

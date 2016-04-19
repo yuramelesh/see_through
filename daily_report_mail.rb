@@ -85,7 +85,7 @@ def get_recently_merged_pr first_hr, repo
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
   @main_controller.get_repo_pr_by_state(repo, 'merged').each do |pull_request|
     recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
-    <p>Author: #{pull_request.author}</p>"
+      <p>Author: #{pull_request.author}</p>"
   end
   recently_merged << "</div>"
 
