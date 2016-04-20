@@ -62,6 +62,7 @@ target/
 .ipynb_checkpoints
 .idea
 *~
+*.zip
 deploy/
 conf.yml
 Gemfile.lock
