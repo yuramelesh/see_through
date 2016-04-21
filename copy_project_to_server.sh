@@ -19,5 +19,6 @@ zip -r see_through_$VERSION_SHORT * -x ".git" -x ".idea" -x "package.sh" -x "*.s
 #Copying *.zip to server
 ssh -i $KEY_FILE -p $PORT $USER@$HOST mkdir -p $TEMP_DIR
 scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/*.zip $USER@$HOST:$TEMP_DIR
+scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/*.zip $USER@$HOST:$ZIP_DIR
 scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/setup.sh $USER@$HOST:
 ssh -i $KEY_FILE -p $PORT $USER@$HOST bash setup.sh

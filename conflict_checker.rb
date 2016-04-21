@@ -82,6 +82,11 @@ class ConflictChecker
           end
         end
 
+        github_pr_numbers.each do |pull|
+          pr_data = @client.get_github_pr_by_number repository, pull
+          @controller.create_or_update_pr pr_data, repository
+        end
+
       end
     end
     @logger.info('conflict checker end')
