@@ -63,6 +63,7 @@ target/
 .idea
 *~
 *.zip
+version.txt
 deploy/
 conf.yml
 Gemfile.lock

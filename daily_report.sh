@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /home/ubuntu/.profile
+source /home/vagrant/.profile
 
-cd /home/ubuntu/box/see_through/
+cd /home/vagrant/see_through/
 
 /usr/bin/ruby daily_report.rb

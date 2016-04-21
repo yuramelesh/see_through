@@ -74,7 +74,6 @@ class ConflictChecker
 
       end
     end
-    @logger.info('conflict_checker end')
   end
 
   def check_pull_requests_state (pull_requests, repository)

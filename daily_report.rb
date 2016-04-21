@@ -55,7 +55,7 @@ repositories.each do |repos|
 
         if @time.check_time(user.notify_at.to_s)
           repo = repos.repository_name
-          if true #!data_existing
+          if !data_existing
             get_pr repo
             data_existing = true
           end
