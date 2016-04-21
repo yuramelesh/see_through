@@ -13,7 +13,6 @@ config = Config_reader.new
 repositories = config.get_repos
 users_from_yml = config.get_users_from_config_yml
 @controller = MainController.new
-@octokit_client = OctokitClient.new
 @db = Database.new
 @logger = Logger.new('logfile.log')
 
@@ -37,26 +36,22 @@ def mail_sending (repo, user)
 end
 
 repositories.each do |repos|
+
   if repos.recipients != nil
     data_existing = false
+
     repos.recipients.each do |repo_user|
       user = @controller.get_user_by_login(repo_user)
-      if user.enable
 
-        def get_pr repo
-          pr_data = @octokit_client.get_all_github_pr repo
-          if pr_data != nil
-            pr_data.each do |pr|
-              @octokit_client.check_pr_for_existing pr, repo
-              @octokit_client.check_pr_status repo
-            end
-          end
-        end
+      if user.enable
+        repo = repos.repository_name
+        @controller.get_pr repo
 
         if @time.check_time(user.notify_at.to_s)
           repo = repos.repository_name
+
           if !data_existing
-            get_pr repo
+            @controller.get_pr repo
             data_existing = true
           end
           mail_sending repo, user

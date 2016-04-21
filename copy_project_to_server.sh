@@ -5,9 +5,9 @@ USER=$2
 PORT=22
 KEY_FILE=$3
 LOCAL_DIR=$4
-REMOTE_DIR=/home/ubuntu/tmp/
-ZIP_DIR=/home/ubuntu/tmp/deploy/
-TEMP_DIR=/home/ubuntu/tmp/deploy/temp/
+REMOTE_DIR=/home/ubuntu/box/
+ZIP_DIR=/home/ubuntu/box/deploy/
+TEMP_DIR=/home/ubuntu/box/deploy/temp/
 
 #Creating local *.zip
 VERSION_SHORT=$(git rev-parse --short HEAD)
@@ -19,7 +19,5 @@ zip -r see_through_$VERSION_SHORT * -x ".git" -x ".idea" -x "package.sh" -x "*.s
 #Copying *.zip to server
 ssh -i $KEY_FILE -p $PORT $USER@$HOST mkdir -p $TEMP_DIR
 scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/*.zip $USER@$HOST:$TEMP_DIR
-scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/*.zip $USER@$HOST:$ZIP_DIR
-ssh -i $KEY_FILE -p $PORT $USER@$HOST unzip $TEMP_DIR/*.zip -d $TEMP_DIR
-
-#ssh -i $KEY_FILE -p $PORT $USER@$HOST cd $REMOTE_DIR; bash vagrant init
+scp -rp -P$PORT -i $KEY_FILE $LOCAL_DIR/setup.sh $USER@$HOST:
+ssh -i $KEY_FILE -p $PORT $USER@$HOST bash setup.sh

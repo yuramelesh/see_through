@@ -1,9 +1,11 @@
 require 'active_record'
+require 'logger'
 
 class Database
 
   def initialize
     init_database
+    @logger = Logger.new('logfile.log')
   end
 
   class User < ActiveRecord::Base
@@ -44,6 +46,7 @@ class Database
     )
     # commentors = pull_request_data[:commentors].to_a
     # build_list_of_commentors commentors
+    @logger.info("Pull request##{pull_request_data[:number]} was added to database!")
   end
 
   def create_new_user (user)
