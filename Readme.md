@@ -1,8 +1,6 @@
 Add following lines to .bash_profile
 
 ```
-### VARIABLES ###
-
 SEE_THROUGH_TOKEN
 SEE_THROUGH_EMAIL
 SEE_THROUGH_EMAIL_PASS
