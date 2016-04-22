@@ -4,6 +4,6 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", path: "/home/ubuntu/box/deploy/temp/ops/provision.sh"
 
-  config.vm.synced_folder "deploy/temp", "/home/vagrant/see_through"
+  config.vm.synced_folder "deploy/temp", ENV['HOME_PATH']+"see_through"
 
 end
