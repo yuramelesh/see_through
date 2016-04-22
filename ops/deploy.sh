@@ -7,7 +7,7 @@ then
  HOST=localhost
  KEY_FILE=/home/ubuntu/box/.vagrant/machines/default/virtualbox/private_key
  LOCAL_DIR=/home/ubuntu/box/deploy/temp
- REMOTE_DIR=$HOME_PATH
+ REMOTE_DIR=$SEE_THROUGH_HOME
 else
  HOST=$1
  USER=$2

@@ -2,6 +2,6 @@
 
 source $PWD/.profile
 
-cd $HOME_PATH
+cd $SEE_THROUGH_HOME
 
 /usr/bin/ruby daily_report.rb
