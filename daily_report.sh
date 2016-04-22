@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source $HOME_PATH/.profile
+source $PWD/.profile
 
-cd $HOME_PATH/see_through/
+cd $HOME_PATH
 
 /usr/bin/ruby daily_report.rb

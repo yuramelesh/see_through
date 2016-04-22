@@ -30,5 +30,5 @@ sudo apt-get -y install git
 
 echo "------ Add cron jobs ------   "
 
-echo "0 * * * * $HOME_PATH/see_through/daily_report.sh
-*/15 * * * * $HOME_PATH/see_through/conflict_checker.sh" | crontab -
+echo "0 * * * * $HOME_PATH/daily_report.sh
+*/15 * * * * $HOME_PATH/conflict_checker.sh" | crontab -
