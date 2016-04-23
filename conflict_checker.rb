@@ -72,9 +72,24 @@ class ConflictChecker
 
         create_mail repo, merged, conflict, old_pr_block, recipients
 
+        new_pull_requests.each do |pull|
+          pr_data = @client.get_github_pr_by_number repository, pull
+          @controller.create_or_update_pr pr_data, repository
+          if pr_data.mergeable.to_s == 'false'
+            recipient = [].to_set
+            recipient.add(@controller.get_user_by_login(pr_data.user.login)[:user_email])
+            create_mail repo, merged, conflict, old_pr_block, recipient
+          end
+        end
+
+        github_pr_numbers.each do |pull|
+          pr_data = @client.get_github_pr_by_number repository, pull
+          @controller.create_or_update_pr pr_data, repository
+        end
+
       end
     end
-    @logger.info('conflict_checker end')
+    @logger.info('conflict checker end')
   end
 
   def check_pull_requests_state (pull_requests, repository)

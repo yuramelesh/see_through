@@ -1,6 +1,10 @@
 Add following lines to .bash_profile
 
 ```
-### KEEP WORKING ###
+SEE_THROUGH_TOKEN
+SEE_THROUGH_EMAIL
+SEE_THROUGH_EMAIL_PASS
+DEBUG_EMAIL
+SEE_THROUGH_HOME
 
 ```

@@ -7,6 +7,17 @@ class MainController
     @db = Database.new
   end
 
+  def get_pr (repo)
+    octokit_client = OctokitClient.new
+    pr_data = octokit_client.get_all_github_pr repo
+    if pr_data != nil
+      pr_data.each do |pr|
+        octokit_client.check_pr_for_existing pr, repo
+        octokit_client.check_pr_status repo
+      end
+    end
+  end
+
   def add_new_pr (pr_data, repo)
     pr = CLIENT.pull_request(repo, pr_data.number)
     @db.create_pull_request pr_data, repo, pr
