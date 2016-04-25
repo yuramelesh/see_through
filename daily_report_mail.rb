@@ -4,11 +4,6 @@ require_relative 'main_controller'
 require_relative 'time_class'
 require_relative 'mailler'
 
-# def send_time_check user
-#   utc_time = Time.now.getutc
-#   utc_time.strftime( "%H" )
-# end
-
 @email = Email.new
 @main_controller = MainController.new
 @time = TimeClass.new
@@ -98,7 +93,10 @@ def get_new_pr other_block
     new_pr << '<hr><h2>New pull requests</h2>'
     other_block.each do |i|
       if i[:index] == 3
-        new_pr << i[:text].to_s
+        if !@time.check_24_hours_past(i[:create_time])
+          new_pr << i[:text].to_s
+          puts i.to_json
+        end
       end
     end
     new_pr << '</div>'
@@ -125,7 +123,7 @@ def create_mail_message user_to, repo
         <p>Has conflicts: #{merge_status}</p>
         <p>Committers: #{pull_request.committer}</p>
         <br /><br />
-    "})
+    ", create_time: pull_request.created_at})
 
     if pull_request.author == user_to.user_login
       if importance == 2
@@ -161,7 +159,9 @@ Content-Type: text/html
 
   #{your_problem_pr}
   #{recently_merged}
-  #{new_pr}
+  #{if new_pr.length > 36
+      new_pr
+    end}
   #{other_problem_pr}
 
 EOF
