@@ -1,7 +1,6 @@
 require 'net/smtp'
 require 'logger'
 
-
 class Email
 
   def initialize
