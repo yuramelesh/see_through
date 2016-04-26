@@ -2,6 +2,7 @@ Vagrant.configure(2) do |config|
 
   config.env.enable
 
+<<<<<<< HEAD
   config.vm.box = ENV['UBUNTU_BOX']
 
   SEE_THROUGH_HOME_PATH=ENV['SEE_THROUGH_HOME']
@@ -41,3 +42,9 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder "deploy/temp", SEE_THROUGH_HOME_PATH
 
 end
+=======
+  config.vm.box = "ubuntu/trusty32"
+
+  config.vm.provision "shell", path: "#{ENV['SEE_THROUGH_HOME']}/ops/provision.sh"
+end
+>>>>>>> 57860ddb9efe3db885e121e3263d15e8c64a755c

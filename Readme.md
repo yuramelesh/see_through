@@ -1,10 +1,17 @@
 Add following lines to .env
 
 ```
+<<<<<<< HEAD
 SEE_THROUGH_HOME_PATH
+=======
+>>>>>>> 57860ddb9efe3db885e121e3263d15e8c64a755c
 SEE_THROUGH_TOKEN
 SEE_THROUGH_EMAIL
 SEE_THROUGH_EMAIL_PASS
 DEBUG_EMAIL
+<<<<<<< HEAD
+=======
+SEE_THROUGH_HOME
+>>>>>>> 57860ddb9efe3db885e121e3263d15e8c64a755c
 
 ```
