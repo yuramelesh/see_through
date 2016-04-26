@@ -61,9 +61,10 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 .idea
+package
 *~
 *.zip
-version.txt
+version.rb
 deploy/
 conf.yml
 Gemfile.lock
