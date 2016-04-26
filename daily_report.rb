@@ -50,11 +50,7 @@ repositories.each do |repos|
         if @time.check_time(user.notify_at.to_s)
           repo = repos.repository_name
 
-<<<<<<< HEAD
           unless data_existing
-=======
-          if !data_existing
->>>>>>> 57860ddb9efe3db885e121e3263d15e8c64a755c
             @controller.get_pr repo
             data_existing = true
           end
