@@ -34,7 +34,7 @@ Vagrant.configure(2) do |config|
 
   bash #{SEE_THROUGH_HOME_PATH}ops/provision.sh
 
-  bundle install --gemfile=#{SEE_THROUGH_HOME_PATH}Gemfile --no-cache --no-rdoc --no-ri
+  bundle install --gemfile=#{SEE_THROUGH_HOME_PATH}Gemfile --no-cache
 
   SHELL
 
