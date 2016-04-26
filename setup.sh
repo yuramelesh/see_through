@@ -6,4 +6,6 @@ if [ ! -f /home/ubuntu/box/Vagrantfile ]; then
     vagrant init ubuntu/trusty32
 fi
 
+sudo vagrant plugin install vagrant-env
+
 cp /home/ubuntu/box/deploy/temp/Vagrantfile box/
