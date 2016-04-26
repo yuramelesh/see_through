@@ -12,15 +12,15 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_HOME_PATH+x} ]; then
+  source ~/.profile && if [ -z ${SEE_THROUGH_HOME_PATH} ]; then
         echo "export SEE_THROUGH_HOME_PATH=#{SEE_THROUGH_HOME_PATH}" >> .profile
   fi
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_TOKEN+x} ]; then
+  source ~/.profile && if [ -z ${SEE_THROUGH_TOKEN} ]; then
         echo "export SEE_THROUGH_TOKEN=#{SEE_THROUGH_TOKEN}" >> .profile
   fi
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_EMAIL+x} ]; then
+  source ~/.profile && if [ -z ${SEE_THROUGH_EMAIL} ]; then
         echo "export SEE_THROUGH_EMAIL=#{SEE_THROUGH_EMAIL}" >> .profile
   fi
 

@@ -39,7 +39,7 @@ class TimeClass
     return false
   end
 
-  def check_24_hours_past (sent_at)
-    TimeDifference.between(Time.new.utc, sent_at).in_hours.to_i >= 24
+  def check_time_pass (from_time, difference_value)
+    TimeDifference.between(Time.new.utc, from_time).in_hours.to_i >= difference_value
   end
 end

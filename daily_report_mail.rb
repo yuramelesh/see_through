@@ -79,8 +79,10 @@ def get_recently_merged_pr first_hr, repo
   recently_merged = ''
   recently_merged << "#{first_hr}<h2>Recently merged pull requests</h2>"
   @main_controller.get_repo_pr_by_state(repo, 'merged').each do |pull_request|
-    recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
+    unless @time.check_time_pass(pull_request.updated_at, 24)
+      recently_merged << "<h3>Pull Request -  #{pull_request.title} <a href='https://github.com/#{repo}/pull/#{pull_request.pr_id}/'>##{pull_request.pr_id}</a></h3>
       <p>Author: #{pull_request.author}</p>"
+    end
   end
   recently_merged << "</div>"
 
@@ -92,12 +94,11 @@ def get_new_pr other_block
   if other_block.length > 0
     new_pr << '<hr><h2>New pull requests</h2>'
     other_block.each do |i|
-      if i[:index] == 3
-        if !@time.check_24_hours_past(i[:create_time])
-          new_pr << i[:text].to_s
-          puts i.to_json
-        end
+      # if i[:index] == 3
+      unless @time.check_time_pass(i[:create_time], 24)
+        new_pr << i[:text].to_s
       end
+      # end
     end
     new_pr << '</div>'
   end
@@ -159,9 +160,10 @@ Content-Type: text/html
 
   #{your_problem_pr}
   #{recently_merged}
-  #{if new_pr.length > 36
-      new_pr
-    end}
+  #{
+  if new_pr.length > 36
+    new_pr
+  end}
   #{other_problem_pr}
 
 EOF
