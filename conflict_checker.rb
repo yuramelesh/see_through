@@ -133,10 +133,9 @@ Content-Type: text/html
  #{merged}
 
       #{
-      if conflict.length > 28
+      if conflict.include? "<p>"
         conflict
-      end
-      }
+      end}
 
       #{old_pr_block}
 

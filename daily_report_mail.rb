@@ -94,11 +94,9 @@ def get_new_pr other_block
   if other_block.length > 0
     new_pr << '<hr><h2>New pull requests</h2>'
     other_block.each do |i|
-      # if i[:index] == 3
       unless @time.check_time_pass(i[:create_time], 24)
         new_pr << i[:text].to_s
       end
-      # end
     end
     new_pr << '</div>'
   end
@@ -159,9 +157,12 @@ Mime-Version: 1.0
 Content-Type: text/html
 
   #{your_problem_pr}
-  #{recently_merged}
   #{
-  if new_pr.length > 36
+  if recently_merged.include? "<p>"
+    recently_merged
+  end}
+  #{
+  if new_pr.include? "<p>"
     new_pr
   end}
   #{other_problem_pr}

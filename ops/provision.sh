@@ -18,15 +18,11 @@ echo "------ Install sqlite3 ------"
 sudo apt-get install libsqlite3-dev
 sudo apt-get install sqlite3
 
-echo "------ Install gems ------"
-
-sudo bundle install
-
 echo "------ Install git ------"
 
 sudo apt-get -y install git
 
 echo "------ Add cron jobs ------   "
 
-echo "0 * * * * vagrant/see_through/daily_report.sh
-*/15 * * * * $SEE_THROUGH_HOME/conflict_checker.sh" | crontab -
+echo "0 * * * * ENV['SEE_THROUGH_HOME_PATH']daily_report.sh
+*/15 * * * * ENV['SEE_THROUGH_HOME_PATH']conflict_checker.sh" | crontab -

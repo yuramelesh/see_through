@@ -32,8 +32,12 @@ Vagrant.configure(2) do |config|
         echo "export DEBUG_EMAIL=#{DEBUG_EMAIL}" >> .profile
   fi
 
+  bash #{SEE_THROUGH_HOME_PATH}ops/provision.sh
+
+  bundle install --gemfile=#{SEE_THROUGH_HOME_PATH}Gemfile --no-cache --no-rdoc --no-ri
+
   SHELL
 
-  config.vm.synced_folder "deploy/temp", SEE_THROUGH_HOME
+  config.vm.synced_folder "deploy/temp", SEE_THROUGH_HOME_PATH
 
 end
