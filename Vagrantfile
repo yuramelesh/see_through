@@ -12,15 +12,15 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_HOME_PATH} ]; then
+  source ~/.profile && if [ -z "$SEE_THROUGH_HOME_PATH" ]; then
         echo "export SEE_THROUGH_HOME_PATH=#{SEE_THROUGH_HOME_PATH}" >> .profile
   fi
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_TOKEN} ]; then
+  source ~/.profile && if [ -z "$SEE_THROUGH_TOKEN" ]; then
         echo "export SEE_THROUGH_TOKEN=#{SEE_THROUGH_TOKEN}" >> .profile
   fi
 
-  source ~/.profile && if [ -z ${SEE_THROUGH_EMAIL} ]; then
+  source ~/.profile && if [ -z "$SEE_THROUGH_EMAIL" ]; then
         echo "export SEE_THROUGH_EMAIL=#{SEE_THROUGH_EMAIL}" >> .profile
   fi
 
@@ -32,9 +32,7 @@ Vagrant.configure(2) do |config|
         echo "export DEBUG_EMAIL=#{DEBUG_EMAIL}" >> .profile
   fi
 
-  bash #{SEE_THROUGH_HOME_PATH}ops/provision.sh
-
-  bundle install --gemfile=#{SEE_THROUGH_HOME_PATH}Gemfile --no-cache
+  bash #{SEE_THROUGH_HOME_PATH}/ops/provision.sh #{SEE_THROUGH_HOME_PATH}
 
   SHELL
 

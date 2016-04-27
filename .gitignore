@@ -64,11 +64,8 @@ target/
 package
 *~
 *.zip
-<<<<<<< HEAD
 version.txt
-=======
 version.rb
->>>>>>> 57860ddb9efe3db885e121e3263d15e8c64a755c
 deploy/
 conf.yml
 Gemfile.lock
